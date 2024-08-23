@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.Concurrent;
 using Backend;
 using Backend.Business;
+using Backend.Database;
 using NQutils.Config;
 using Backend.Storage;
 using Backend.Scenegraph;
@@ -17,6 +18,7 @@ using NQ.Interfaces;
 using NQutils;
 using NQutils.Net;
 using NQutils.Serialization;
+using NQutils.Sql;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -94,7 +96,12 @@ public class MyDuMod: IMod
         var payload = await client.GetRaw(url);
         var bpId = await isp.GetRequiredService<IDataAccessor>().BlueprintImport(payload.Span.ToArray(), new EntityId { playerId = playerId});
         var bpInfo = await orleans.GetBlueprintGrain().GetBlueprintInfo(bpId);
-        
+        var bpModel = await isp.GetRequiredService<ISql>().Read(bpId);
+        if (bpModel.FreeDeploy && ! await orleans.GetPlayerGrain(playerId).IsAdmin())
+        {
+            logger.LogWarning("Non-admin player {playerId} imported magic blueprint {bpId}, refusing to give it", playerId, bpId);
+            return;
+        }
         var pig = orleans.GetInventoryGrain(playerId);
         var itemStorage = isp.GetRequiredService<IItemStorageService>();
         await using var transaction = await itemStorage.MakeTransaction(
@@ -120,6 +127,7 @@ public class MyDuMod: IMod
                     },
                     new());
         await transaction.Commit();
+        logger.LogInformation("Imported blueprint {bpId} from {url} by player {playerId}", bpId, url, playerId);
     }
     public async Task TriggerAction(ulong playerId, ModAction action)
     {
