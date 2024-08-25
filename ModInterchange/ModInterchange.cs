@@ -197,8 +197,26 @@ public class MyDuMod: IMod
     }
     private async Task ImportBlueprint(ulong playerId, string url)
     {
-        var payload = await client.GetRaw(url);
-        var bpId = await isp.GetRequiredService<IDataAccessor>().BlueprintImport(payload.Span.ToArray(), new EntityId { playerId = playerId});
+        System.Memory<byte> payload = null;
+        try {
+             payload = await client.GetRaw(url);
+        }
+        catch (Exception e)
+        {
+            logger.LogWarning(e, "Blueprint download failure on {url}", url);
+            await Notify(playerId, "Download failure at " + url);
+            throw;
+        }
+        BlueprintId bpId = 0;
+        try {
+             bpId = await isp.GetRequiredService<IDataAccessor>().BlueprintImport(payload.Span.ToArray(), new EntityId { playerId = playerId});
+        }
+        catch (Exception e)
+        {
+            logger.LogWarning(e, "Blueprint import from {url} failure", url);
+            await Notify(playerId, "Import failure at " + url);
+            throw;
+        }
         var bpInfo = await orleans.GetBlueprintGrain().GetBlueprintInfo(bpId);
         var bpModel = await isp.GetRequiredService<ISql>().Read(bpId);
         if (bpModel.FreeDeploy && ! await orleans.GetPlayerGrain(playerId).IsAdmin())
