@@ -32,3 +32,15 @@ restart orleans.
 
 Note that the ModInterchange directory is not garbage-collected, this is left
 as an exercise to the reader.
+
+# Configuration
+
+The mod can optionally read a file named "ModInterchange.json" in the same
+directory as the installed mod dll. Here is a sample with default values:
+
+    {
+      "enforceDRM": true,
+      "allowSingleUseBlueprint": false,
+      "allowImport": true,
+      "allowExport": true
+    }

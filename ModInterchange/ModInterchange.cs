@@ -23,6 +23,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
+public class ICConfig
+{
+    public bool enforceDRM { get; set; } = true;
+    public bool allowSingleUseBlueprint { get; set; } = false;
+    public bool allowImport { get; set;} = true;
+    public bool allowExport { get; set;} = true;
+}
+
 public class MyDuMod: IMod
 {
     private IServiceProvider isp;
@@ -30,6 +38,7 @@ public class MyDuMod: IMod
     private ILogger logger;
     private HttpClient client;
     private ConcurrentDictionary<ulong, bool> hasPanel = new();
+    private ICConfig config = new();
     public string GetName()
     {
         return "NQ.Interchange";
@@ -39,7 +48,19 @@ public class MyDuMod: IMod
         this.isp = isp;
         this.orleans = isp.GetRequiredService<IClusterClient>();
         this.logger = isp.GetRequiredService<ILogger<MyDuMod>>();
-        this.client = isp.GetRequiredService<IHttpClientFactory>().CreateClient();
+        var handler = new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
+        };
+        this.client = new HttpClient(handler);
+        if (File.Exists("/OrleansGrains/Mods/ModInterchange.json"))
+        {
+            var jdata = File.ReadAllText("/OrleansGrains/Mods/ModInterchange.json");
+            config = JsonConvert.DeserializeObject<ICConfig>(jdata);
+            logger.LogInformation("ModInterchange initialized from config");
+        }
+        else
+            logger.LogInformation("ModInterchange initialized with default config");
         return Task.CompletedTask;
     }
     public Task<ModInfo> GetModInfoFor(ulong playerId, bool admin)
@@ -48,38 +69,121 @@ public class MyDuMod: IMod
         var res = new ModInfo
         {
             name = GetName(),
-            actions = new List<ModActionDefinition>
-            {
+            actions = new List<ModActionDefinition>(),
+        };
+        if (config.allowExport)
+        {
+            res.actions.Add(
                 new ModActionDefinition
                 {
                     id = 1,
                     label = "Interchange\\Export slot 1 blueprint",
                     context = ModActionContext.Global,
-                },
+                });
+            res.actions.Add(
                 new ModActionDefinition
                 {
                     id = 2,
+                    label = "Interchange\\Export last slot blueprint",
+                    context = ModActionContext.Global,
+                });
+        }
+        if (config.allowImport)
+        {
+            res.actions.Add(
+                new ModActionDefinition
+                {
+                    id = 3,
                     label = "Interchange\\Import blueprint URL",
                     context = ModActionContext.Global,
-                },
-            }
+                });
         };
         return Task.FromResult(res);
     }
-    private async Task ExportBlueprint(ulong playerId)
+    private async Task ExportBlueprint(ulong playerId, bool firstSlot)
     {
         var pig = orleans.GetInventoryGrain(playerId);
         var si = await pig.Get(playerId);
-        var hit = si.content.Where(s => s.position == 0).FirstOrDefault();
+        StorageSlot hit = null;
+        if (firstSlot)
+        {
+            hit = si.content.Where(s => s.position == 0).FirstOrDefault();
+        }
+        else
+        {
+            hit = si.content.Aggregate((agg, next)=> agg.position > next.position ? agg:next);
+        }
         if (hit == null)
+        {
+            await Notify(playerId, "Slot not found");
             return;
+        }
         var bpId = hit.content.id;
         if (bpId == 0)
+        {
+            await Notify(playerId, "Bad item type in target slot");
             return;
-        var bin = await isp.GetRequiredService<IDataAccessor>().BlueprintExport((long)bpId);
+        }
+        var type = hit.content.type;
+        var bank = isp.GetRequiredService<IGameplayBank>();
+        var sql = isp.GetRequiredService<ISql>();
+        var bd = bank.GetDefinition(type);
+        var valid = false;
+        if (bd.Is<NQutils.Def.Blueprint>())
+            valid = true;
+        else if (config.allowSingleUseBlueprint && bd.Is<NQutils.Def.SingleUseBlueprint>())
+            valid = true;
+        if (!valid)
+        {
+            await Notify(playerId, "Bad item type in target slot");
+            return;
+        }
+        bool drmProtect = false;
+        if (config.enforceDRM)
+        {
+            ulong coreType = 0;
+            var bpModel = await sql.Read(bpId);
+            var creator = bpModel.JsonProperties.serverProperties.creatorId;
+            bool isMe = false;
+            if (creator.playerId == 0 && creator.organizationId == 0)
+                isMe = true;
+            if (creator.playerId != 0 && creator.playerId == playerId)
+                isMe = true;
+            if (creator.organizationId != 0)
+            {
+                isMe = await orleans.GetOrganizationGrain(creator.organizationId).IsLegate(new EntityId{playerId = playerId}); 
+            }
+            if (!isMe)
+            {
+                drmProtect = true;
+                var requiredItems = await sql.GetIngredients(bpId);
+                foreach (var ri in requiredItems)
+                {
+                    if (bank.GetBaseObject<NQutils.Def.CoreUnit>(ri.id) != null)
+                    {
+                        coreType = ri.id;
+                        break;
+                    }
+                }
+                var coreDrm = await sql.BlueprintCoreDRMGet(bpId, coreType);
+                if (coreDrm)
+                {
+                    await Notify(playerId, "core DRM is enabled and you are not the creator");
+                    return;
+                }
+            }
+        }
+        var exp = await orleans.GetBlueprintGrain().Export(bpId, drmProtect);
+        string res = Newtonsoft.Json.JsonConvert.SerializeObject(exp);
+        var bin = System.Text.Encoding.UTF8.GetBytes(res);
         var uid = Guid.NewGuid().ToString() + ".json";
         File.WriteAllBytes("/NQInterchange/" + uid, bin);
         var url = Config.Instance.backoffice.public_url + "/nqinterchange/"+uid;
+        await Notify(playerId, "Your blueprint is ready at " + url);
+        logger.LogInformation("ModInterchange export of {blueprintId} by {playerId} at {url}", bpId, playerId, url);
+    }
+    private async Task Notify(ulong playerId, string message)
+    {
         await orleans.GetChatGrain(2).SendMessage(
             new MessageContent
             {
@@ -88,7 +192,7 @@ public class MyDuMod: IMod
                     channel = MessageChannelType.PRIVATE,
                     targetId = playerId
                 },
-                message = "Your blueprint is ready at " + url,
+                message = message,
             });
     }
     private async Task ImportBlueprint(ulong playerId, string url)
@@ -100,7 +204,7 @@ public class MyDuMod: IMod
         if (bpModel.FreeDeploy && ! await orleans.GetPlayerGrain(playerId).IsAdmin())
         {
             logger.LogWarning("Non-admin player {playerId} imported magic blueprint {bpId}, refusing to give it", playerId, bpId);
-            return;
+            await Notify(playerId, "You are not allowed to import free deploy blueprints");
         }
         var pig = orleans.GetInventoryGrain(playerId);
         var itemStorage = isp.GetRequiredService<IItemStorageService>();
@@ -127,13 +231,16 @@ public class MyDuMod: IMod
                     },
                     new());
         await transaction.Commit();
+        await Notify(playerId, "Bluepirnt '"+bpInfo.name+"' imported");
         logger.LogInformation("Imported blueprint {bpId} from {url} by player {playerId}", bpId, url, playerId);
     }
     public async Task TriggerAction(ulong playerId, ModAction action)
     {
-        if (action.actionId == 1)
-            await ExportBlueprint(playerId);
-        else if (action.actionId == 2)
+        if (action.actionId == 1 && config.allowExport)
+            await ExportBlueprint(playerId, true);
+        else if (action.actionId == 2 && config.allowExport)
+            await ExportBlueprint(playerId, false);
+        else if (action.actionId == 3 && config.allowImport)
         {
             if (!hasPanel.ContainsKey(playerId))
             {
@@ -154,7 +261,7 @@ public class MyDuMod: IMod
                     eventPayload = "1",
                 }));
         }
-        else if (action.actionId == 100)
+        else if (action.actionId == 100 && config.allowImport)
             await ImportBlueprint(playerId, action.payload);
     }
     private readonly string panel = @"
