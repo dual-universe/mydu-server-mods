@@ -29,6 +29,8 @@ public class ICConfig
     public bool allowSingleUseBlueprint { get; set; } = false;
     public bool allowImport { get; set;} = true;
     public bool allowExport { get; set;} = true;
+    public bool allowMagicForNonAdmin { get; set;} = false;
+    public string webhookUrl { get; set; } = "";
 }
 
 public class MyDuMod: IMod
@@ -181,6 +183,19 @@ public class MyDuMod: IMod
         var url = Config.Instance.backoffice.public_url + "/nqinterchange/"+uid;
         await Notify(playerId, "Your blueprint is ready at " + url);
         logger.LogInformation("ModInterchange export of {blueprintId} by {playerId} at {url}", bpId, playerId, url);
+        
+        //if string is empty, do not send webhook
+        if (config.webhookUrl != "")
+        {
+            //get the payer name for the webhook message
+            var pNameJson = await orleans.GetPlayerGrain(playerId).GetName();
+            var playerName = pNameJson.name;
+            //send webhook message
+            var webhookMessage = new { content = $"Player {playerName} ({playerId}) exported blueprint {bpId} at {url}" };
+            var webhookJson = Newtonsoft.Json.JsonConvert.SerializeObject(webhookMessage);
+            var webhookContent = new StringContent(webhookJson, System.Text.Encoding.UTF8, "application/json");
+            var webhookResponse = await client.PostAsync(config.webhookUrl, webhookContent);
+        }
     }
     private async Task Notify(ulong playerId, string message)
     {
@@ -219,7 +234,7 @@ public class MyDuMod: IMod
         }
         var bpInfo = await orleans.GetBlueprintGrain().GetBlueprintInfo(bpId);
         var bpModel = await isp.GetRequiredService<ISql>().Read(bpId);
-        if (bpModel.FreeDeploy && ! await orleans.GetPlayerGrain(playerId).IsAdmin())
+        if (bpModel.FreeDeploy && ! await orleans.GetPlayerGrain(playerId).IsAdmin() && !config.allowMagicForNonAdmin)
         {
             logger.LogWarning("Non-admin player {playerId} imported magic blueprint {bpId}, refusing to give it", playerId, bpId);
             await Notify(playerId, "You are not allowed to import free deploy blueprints");
