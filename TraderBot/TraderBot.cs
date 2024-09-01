@@ -99,13 +99,20 @@ public class Mod
         return Task.CompletedTask;
     }
     /// Conveniance helper for running code forever
-    public async Task SafeLoop(Func<Task> action, int exceptionDelayMs=5000)
+    public async Task SafeLoop(Func<Task> action, int exceptionDelayMs,
+        Func<Task> reconnect)
     {
         while (true)
         {
             try
             {
                 await action();
+            }
+            catch(NQutils.Exceptions.BusinessException be) when (be.error.code == NQ.ErrorCode.InvalidSession)
+            {
+                Console.WriteLine("reconnecting");
+                await reconnect();
+                await Task.Delay(exceptionDelayMs);
             }
             catch(Exception e)
             {
@@ -176,7 +183,9 @@ public class ModTraderBot: Mod
             }
         }
         Console.WriteLine($"Trader will buy {buyPrices.Count} items");
-        await SafeLoop(Action);
+        await SafeLoop(Action, 5000, async () => {
+                bot = await CreateUser("trader", true, false);
+        });
     }
     public async Task RefreshOrders()
     {
