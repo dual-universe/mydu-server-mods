@@ -223,6 +223,7 @@ public class MyDuMod: IMod
         {
             logger.LogWarning("Non-admin player {playerId} imported magic blueprint {bpId}, refusing to give it", playerId, bpId);
             await Notify(playerId, "You are not allowed to import free deploy blueprints");
+            return;
         }
         var pig = orleans.GetInventoryGrain(playerId);
         var itemStorage = isp.GetRequiredService<IItemStorageService>();
