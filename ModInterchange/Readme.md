@@ -16,14 +16,14 @@ your inventory.
 
 A few changes are required server side:
 
-Add the following lines to the nginx and orleans serivices in docker-compose.yml,
-in the 'volumes' section for each of them:
+Add the following lines to the `nginx` and `orleans` serivices in `docker-compose.yml`,
+in the `volumes` section for each of them:
 
     - ./NQInterchange:/NQInterchange
 
-Modify nginx/conf.d/backoffice.conf by adding before the existing 'location':
+Modify `nginx/conf.d/backoffice.conf` by adding before the existing 'location':
 
-     location /NQInterchange {
+     location /nqinterchange {
         alias /NQInterchange;
     }
 
@@ -35,12 +35,16 @@ as an exercise to the reader.
 
 # Configuration
 
-The mod can optionally read a file named "ModInterchange.json" in the same
+The mod can optionally read a file named `ModInterchange.json` in the same
 directory as the installed mod dll. Here is a sample with default values:
 
-    {
-      "enforceDRM": true,
-      "allowSingleUseBlueprint": false,
-      "allowImport": true,
-      "allowExport": true
-    }
+```json
+{
+    "enforceDRM": true,
+    "allowSingleUseBlueprint": false,
+    "allowImport": true,
+    "allowExport": true,
+    "allowMagicForNonAdmin": false,
+    "webhookUrl": ""
+}
+```
