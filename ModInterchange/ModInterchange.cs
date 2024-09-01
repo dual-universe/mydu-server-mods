@@ -249,7 +249,7 @@ public class MyDuMod: IMod
                     },
                     new());
         await transaction.Commit();
-        await Notify(playerId, "Bluepirnt '"+bpInfo.name+"' imported");
+        await Notify(playerId, "Blueprint '"+bpInfo.name+"' imported");
         logger.LogInformation("Imported blueprint {bpId} from {url} by player {playerId}", bpId, url, playerId);
     }
     public async Task TriggerAction(ulong playerId, ModAction action)
