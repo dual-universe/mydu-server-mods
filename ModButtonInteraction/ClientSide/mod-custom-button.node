@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<nodes version="2.3">
+	<materials>
+		<library>resources_generated/elements/containers/container_001/env_container_001.mat</library>
+		<library>resources_generated/gameplay/tools/contactsurface/contact_surface.mat</library>
+	</materials>
+	<node type="ObjectMeshStatic" id="1368520569" name="cbma">
+		<mesh_name>resources_generated/CustomButtonAFixed.mesh</mesh_name>
+		<surface name="default" max_visible_distance="50" material="dispenser" property="surface_base"/>
+		<transform>0.1 0 0 0.0 0 0.1 0 0.0 0 0 0.1 0.0 0 0 0 1.0</transform>
+		<node type="NodeDummy" id="1506342403" name="contact_surfaces3">
+			<transform>1 0 0 0.0 0 1 0 0.0 0 0 1 0.0 0 0 0 1.0</transform>
+			<node type="NodeReference" id="1256371605" name="contact1">
+				<reference>resources_generated/gameplay/tools/contactsurface/nodes/contact_surface_base_03.node</reference>
+				<transform>-1 8.74227798897e-008 7.64274146917e-015 0.0 8.74227798897e-008 1 8.74227817843e-008 0.0 8.47032997741e-022 8.74227869951e-008 -1 0.0 0 8.881784197e-016 -1.57 1.0</transform>
+			</node>
+		</node>
+		<node type="ObjectMeshStatic" id="954025844" enabled="0" name="col_mesh">
+			<mesh_name>resources_generated/CustomButtonA.mesh</mesh_name>
+			<surface name="cba_colmesh" material="cm_01" property="surface_base"/>
+			<transform>0.1 0 0 0.0 0 0.1 0 0.0 0 0 0.1 0.0 0 0 4.4408920985e-016 1.0</transform>
+		</node>
+	</node>
+</nodes>

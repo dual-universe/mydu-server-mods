@@ -1,0 +1,9 @@
+{
+  "elements": {
+    "CustomButtonA": {
+      "icon": "resources_generated/elements/containers/container-dispenser_001/icons/env_container-dispenser_001_icon.png",
+      "node": "resources_generated/mod-custom-button.node",
+      "soundMaterial": "hard"
+    }
+  }
+}
