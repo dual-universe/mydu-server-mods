@@ -306,7 +306,17 @@ public class MyDuMod: IMod
         super();
         this._createHTML();
         this.wrapperNode.classList.add(""hide"");
-        engine.on(""NQInterchangePanel.show"", this.show, this);
+        engine.on(""NQInterchangePanel.show"", this.showIt, this);
+      }
+      showIt(iviz)
+      {
+          if (iviz)
+          {
+              hudManager.toggleEnhancedMouse();
+              this.show(true);
+          }
+          else
+              this.show(false);
       }
       show(isVisible)
       {
@@ -316,7 +326,13 @@ public class MyDuMod: IMod
       {
         super._onVisibilityChange();
         this.wrapperNode.classList.toggle(""hide"", !this.isVisible);
-        CPPInput.setCaptureKeyboard(!!this.isVisible);
+        var that = this;
+        if (!!this.isVisible)
+            inputCaptureManager.captureText(true, ()=>that._close());
+        if (!this.isVisible)
+        {
+            inputCaptureManager.captureText(false);
+        }
       }
       _close()
       {
@@ -326,7 +342,6 @@ public class MyDuMod: IMod
       {
           this.HTMLNodes = {};
           this.wrapperNode = createElement(document.body, ""div"", ""mining_unit_panel"");
-
           let header = createElement(this.wrapperNode, ""div"", ""header"");
           this.HTMLNodes.panelTitle = createElement(header, ""div"", ""panel_title"");
           this.HTMLNodes.panelTitle.innerText = ""Type in blueprint URL"";
