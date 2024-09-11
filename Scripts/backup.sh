@@ -1,10 +1,13 @@
 #!/bin/bash
 
+# Configuration
+MAX_BACKUPS=7  # Maximum number of backups to keep
+BACKUP_DIR="backup"
+
 log() {
     echo "$(date +'%Y-%m-%d %H:%M:%S') - $1"
 }
 
-backup_dir="backup"
 mkdir -p "$backup_dir"
 
 tgt="$backup_dir/$(date +%F-%H-%M-%S)"
@@ -32,3 +35,14 @@ log "Backup compression completed."
 rm -rf "$tgt"
 
 log "Backup process completed. Compressed backup saved as $tgt.tar.gz"
+
+log "Checking for old backups to remove..."
+backup_count=$(ls -1 "$BACKUP_DIR"/*.tar.gz 2>/dev/null | wc -l)
+if [ "$backup_count" -gt "$MAX_BACKUPS" ]; then
+    num_to_delete=$((backup_count - MAX_BACKUPS))
+    log "Removing $num_to_delete old backup(s)..."
+    ls -1t "$BACKUP_DIR"/*.tar.gz | tail -n "$num_to_delete" | xargs rm -f
+    log "Old backups removed."
+else
+    log "No old backups need to be removed."
+fi
