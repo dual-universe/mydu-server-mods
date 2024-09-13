@@ -3,14 +3,16 @@
 # Configuration
 MAX_BACKUPS=7  # Maximum number of backups to keep
 BACKUP_DIR="backup"
+SERVER_DIR="/DU_Server"
 
 log() {
     echo "$(date +'%Y-%m-%d %H:%M:%S') - $1"
 }
 
-mkdir -p "$backup_dir"
+cd "$SERVER_DIR"
+mkdir -p "$BACKUP_DIR"
 
-tgt="$backup_dir/$(date +%F-%H-%M-%S)"
+tgt="$BACKUP_DIR/$(date +%F-%H-%M-%S)"
 mkdir "$tgt"
 
 log "Starting PostgreSQL backup..."
@@ -29,7 +31,7 @@ cp -a data/user_content "$tgt/user_content"
 log "User content backup completed."
 
 log "Compressing backup..."
-tar -czf "$tgt.tar.gz" -C "$backup_dir" "$(basename "$tgt")"
+tar -czf "$tgt.tar.gz" -C "$BACKUP_DIR" "$(basename "$tgt")"
 log "Backup compression completed."
 
 rm -rf "$tgt"
