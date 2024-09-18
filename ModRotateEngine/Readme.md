@@ -4,6 +4,10 @@ This is just a proof of concept and not realy useable as is.
 
 
 
+https://github.com/user-attachments/assets/d6c7a9d1-7baa-45c1-b875-de352a52853c
+
+
+
 ## Usage
 
 Right-click on the engines you want rotation control for and hit "Engine->set as rotating".
