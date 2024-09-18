@@ -2,6 +2,8 @@
 
 ## Enabling orleans dashboard
 
+![dashboard](https://github.com/user-attachments/assets/70a5f1ef-5cef-4188-a736-b4e20ccebdf9)
+
 Orleans has a dashboard web interface that exposes useful orleans metrics like
 call rate and latency, active grains, exception rate...
 
@@ -15,6 +17,9 @@ to http://localhost:8099 .
 
 
 # Enabling grafala
+
+![grafana](https://github.com/user-attachments/assets/94cec4c9-f753-429f-9547-6f0c374f979e)
+
 
 The MyDU service use the prometheus system to expose a lot of usefull metrics.
 
