@@ -1,0 +1,725 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_CICD",
+      "label": "cicd",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": [],
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "8.4.5"
+    },
+    {
+      "type": "panel",
+      "id": "heatmap",
+      "name": "Heatmap",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "iteration": 1726656303907,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "dev"
+      ],
+      "targetBlank": false,
+      "title": "Devs",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    },
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [
+        "orleans"
+      ],
+      "targetBlank": false,
+      "title": "Orleans",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_CICD}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "reqps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 5,
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull",
+            "max"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "sortBy": "Max",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_CICD}"
+          },
+          "exemplar": true,
+          "expr": "sum by (currentGrain,currentMethod,type) (rate(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\",currentGrain=~\"^$grain$\",category=~\"$category\",name=~\"^$name$\",type=~\"$type\"}[$__rate_interval])) ",
+          "interval": "",
+          "legendFormat": "{{currentGrain}} {{currentMethod}} {{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "grain rps on  \"$category\" \"$name\"",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_CICD}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 10,
+              "type": "log"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 6
+      },
+      "id": 8,
+      "maxDataPoints": 50,
+      "options": {
+        "legend": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "displayMode": "table",
+          "placement": "right",
+          "sortBy": "Last *",
+          "sortDesc": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_CICD}"
+          },
+          "exemplar": false,
+          "expr": "(sum by (currentGrain,type) (rate (nq_request_duration_sum{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\",currentGrain=~\"${grain}\",category=\"$category\",name=~\"^$name$\",type=~\"$type\"}[$__rate_interval]))) / (sum by (currentGrain, type) (rate (nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\",currentGrain=~\"${grain}\",category=\"$category\",name=~\"^$name$\",type=~\"$type\"}[$__rate_interval])))",
+          "interval": "",
+          "legendFormat": "{{currentGrain}} {{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "average request duration on \"${grain}\" $category $name",
+      "type": "timeseries"
+    },
+    {
+      "cards": {},
+      "color": {
+        "cardColor": "#b4ff00",
+        "colorScale": "sqrt",
+        "colorScheme": "interpolateOranges",
+        "exponent": 0.5,
+        "mode": "opacity"
+      },
+      "dataFormat": "tsbuckets",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_CICD}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 0,
+        "y": 12
+      },
+      "heatmap": {},
+      "hideZeroBuckets": false,
+      "highlightCards": true,
+      "id": 7,
+      "legend": {
+        "show": false
+      },
+      "maxDataPoints": 20,
+      "reverseYBuckets": false,
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_CICD}"
+          },
+          "exemplar": false,
+          "expr": "sum(increase(nq_request_duration_bucket{application_role=~\"$application_role\",instance=~\"${instance}\",currentGrain=~\"^${grain}$\",category=\"$category\",name=~\"^$name$\",type=~\"$type\"}[$__rate_interval])) by (le)",
+          "format": "heatmap",
+          "interval": "",
+          "legendFormat": "{{le}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Heatmap of ${grain} $category $name",
+      "tooltip": {
+        "show": true,
+        "showHistogram": false
+      },
+      "type": "heatmap",
+      "xAxis": {
+        "show": true
+      },
+      "yAxis": {
+        "decimals": 0,
+        "format": "s",
+        "logBase": 2,
+        "show": true
+      },
+      "yBucketBound": "auto"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_CICD}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 7,
+        "x": 8,
+        "y": 12
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "asc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_CICD}"
+          },
+          "exemplar": true,
+          "expr": "sum by (currentGrain,currentMethod,type) (max_over_time(nq_request_flying{instance=~\"${instance}\",currentGrain=~\"${grain}\",category=\"$category\",name=~\"^$name$\",type=~\"$type\"}[$__rate_interval]))",
+          "interval": "",
+          "legendFormat": "{{currentGrain}} {{currentMethod}} {{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "flying request for $grain $category-$name",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_CICD}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 9,
+        "x": 15,
+        "y": 12
+      },
+      "id": 16,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_CICD}"
+          },
+          "exemplar": true,
+          "expr": "(sum by (currentGrain,currentMethod,type) (rate (nq_request_duration_count{workspace=\"${workspace}\",instance=~\"${instance}\",currentGrain=~\"${grain}\",category=\"$category\",name=~\"^$name$\",type=~\"$type\",success=\"True\"}[$__rate_interval]))) / (sum by (currentGrain,currentMethod,type) (rate (nq_request_duration_count{workspace=\"${workspace}\",instance=~\"${instance}\",currentGrain=~\"${grain}\",category=\"$category\",name=~\"^$name$\",type=~\"$type\"}[$__rate_interval])))",
+          "interval": "",
+          "legendFormat": "{{currentGrain}} {{currentMethod}} {{type}}",
+          "refId": "A"
+        }
+      ],
+      "title": "success rate on \"${grain}\" $category $name",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": [
+    "orleans",
+    "dev",
+    "prometheus"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "cicd",
+          "value": "cicd"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_CICD}"
+        },
+        "definition": "label_values(nq_request_duration_count, workspace)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "workspace",
+        "options": [],
+        "query": {
+          "query": "label_values(nq_request_duration_count, workspace)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_CICD}"
+        },
+        "definition": "label_values(nq_request_duration_count{workspace=\"${workspace}\"}, application_role)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "application_role",
+        "options": [],
+        "query": {
+          "query": "label_values(nq_request_duration_count{workspace=\"${workspace}\"}, application_role)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_CICD}"
+        },
+        "definition": "label_values(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"${application_role}\"}, instance)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "instance",
+        "options": [],
+        "query": {
+          "query": "label_values(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"${application_role}\"}, instance)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_CICD}"
+        },
+        "definition": "label_values(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\"}, category)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "category",
+        "options": [],
+        "query": {
+          "query": "label_values(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\"}, category)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_CICD}"
+        },
+        "definition": "label_values(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\",category=\"$category\"}, name)",
+        "hide": 0,
+        "includeAll": false,
+        "multi": false,
+        "name": "name",
+        "options": [],
+        "query": {
+          "query": "label_values(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\",category=\"$category\"}, name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": ".*",
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_CICD}"
+        },
+        "definition": "label_values(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\",category=\"$category\",name=\"$name\"}, type)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "type",
+        "options": [],
+        "query": {
+          "query": "label_values(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\",category=\"$category\",name=\"$name\"}, type)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_CICD}"
+        },
+        "definition": "label_values(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\",category=\"$category\",name=\"$name\"}, currentGrain)",
+        "hide": 0,
+        "includeAll": true,
+        "multi": true,
+        "name": "grain",
+        "options": [],
+        "query": {
+          "query": "label_values(nq_request_duration_count{workspace=\"${workspace}\",application_role=~\"$application_role\",instance=~\"${instance}\",category=\"$category\",name=\"$name\"}, currentGrain)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Generic Request Detailed",
+  "uid": "3uQoL8Qnk",
+  "version": 34,
+  "weekStart": ""
+}
