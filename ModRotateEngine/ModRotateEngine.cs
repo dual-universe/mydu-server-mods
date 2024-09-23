@@ -22,21 +22,85 @@ using NQutils.Sql;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using MathNet.Spatial.Euclidean;
 
+public class RotState
+{
+    public List<ElementInfo> engines = new();
+    public double target;
+    public double current;
+}
 public class MyDuMod: IMod
 {
+    private const double STEP_SIZE = 1.0/25.0;
     private IServiceProvider isp;
     private IClusterClient orleans;
     private ILogger logger;
+    private ConcurrentDictionary<ulong, RotState> state = new();
     public string GetName()
     {
         return "NQ.RotateEngine";
+    }
+    private async Task Step()
+    {
+        List<ulong> toRemove = new();
+        foreach (var (k, v) in state)
+        {
+            bool stop = false;
+            if (v.target < v.current)
+            {
+                v.current -= STEP_SIZE;
+                stop = v.target >= v.current;
+            }
+            else
+            {
+                v.current += STEP_SIZE;
+                stop = v.target <= v.current;
+            }
+            var ceg = orleans.GetConstructElementsGrain(k);
+            foreach (var eng in v.engines)
+            {
+                await ceg.MoveElement(new ElementLocation
+                    {
+                        elementId = eng.elementId,
+                        location = new RelativeLocation
+                        {
+                            constructId = k,
+                            position = eng.position,
+                            rotation = Quat.Rotation(new Vec3{x=1}, v.current),
+                        }
+                    });
+            }
+            if (stop)
+                toRemove.Add(k);
+        }
+        foreach (var tr in toRemove)
+        {
+            state.TryRemove(tr, out var _);
+        }
+    }
+    private async Task Loop()
+    {
+        while (true)
+        {
+            try
+            {
+                await Step();
+                await Task.Delay(100);
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "stepping...");
+                await Task.Delay(1000);
+            }
+        }
     }
     public Task Initialize(IServiceProvider isp)
     {
         this.isp = isp;
         this.orleans = isp.GetRequiredService<IClusterClient>();
         this.logger = isp.GetRequiredService<ILogger<MyDuMod>>();
+        var _ = Loop();
         return Task.CompletedTask;
     }
     public Task<ModInfo> GetModInfoFor(ulong playerId, bool admin)
@@ -110,25 +174,33 @@ public class MyDuMod: IMod
             var cid = action.constructId;
             if (cid == 0)
                 cid = (await orleans.GetPlayerGrain(playerId).GetPositionUpdate()).localPosition.constructId;
-            var angle = double.Parse(action.payload);
-            var ceg = orleans.GetConstructElementsGrain(cid);
-            var eids = await ceg.GetElementsOfType<NQutils.Def.EngineUnit>();
-            foreach (var eid in eids)
+            var angle = double.Parse(action.payload) * 3.14159265 / 100.0;
+            if (state.TryGetValue(cid, out var s))
+                s.target = angle;
+            else
             {
-                var el = await ceg.GetElement(eid);
-                if (el.properties.TryGetValue("gameplayTag", out var gt) && gt.stringValue == "can_rotate")
+                var hasCurrent = false;
+                var rs = new RotState();
+                rs.target = angle;
+                var ceg = orleans.GetConstructElementsGrain(cid);
+                var eids = await ceg.GetElementsOfType<NQutils.Def.EngineUnit>();
+                foreach (var eid in eids)
                 {
-                    await ceg.MoveElement(new ElementLocation
+                    var el = await ceg.GetElement(eid);
+                    if (el.properties.TryGetValue("gameplayTag", out var gt) && gt.stringValue == "can_rotate")
+                    {
+                        if (!hasCurrent)
                         {
-                            elementId = eid,
-                            location = new RelativeLocation
-                            {
-                                constructId = cid,
-                                position = el.position,
-                                rotation = Quat.Rotation(new Vec3{x=1}, angle*3.14159 / 100.0/2),
-                            }
-                        });
+                            Quaternion q = (Quaternion)el.rotation;
+                            var ang = q.ToEulerAngles();
+                            rs.current = ang.Alpha.Radians;
+                            hasCurrent = true;
+                            logger.LogInformation("Setting current to {angle}", rs.current*180.0/3.14159);
+                        }
+                        rs.engines.Add(el);
+                    }
                 }
+                state.TryAdd(cid, rs);
             }
         }
     }

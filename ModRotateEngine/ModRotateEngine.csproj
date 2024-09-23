@@ -15,6 +15,7 @@
     <PackageReference Include="prometheus-net" Version="6.0.0" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="6.0.0" />
     <PackageReference Include="K4os.Compression.LZ4" Version="1.2.16" />
+    <PackageReference Include="MathNet.Spatial" Version="0.6.0"/>
   </ItemGroup>
 
   <!-- https://github.com/dotnet/efcore/issues/15047 -->
