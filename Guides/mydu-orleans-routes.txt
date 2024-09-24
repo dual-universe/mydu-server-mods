@@ -1,0 +1,2916 @@
+Those routes are exposed internally by "orleans" service on port 10111.
+
+To get the payload in readable format pass a "Accept: application/json" header.
+
+To pass payload as required by a [FromBody] clause pass json data with a "Content-type: application/json" header.
+
+The route to call is composed of controler name without "controller" suffix plus what "Route" says. For example '/asteroid/list'.
+
+
+AsteroidClient.cs-    [ApiController]
+AsteroidClient.cs:    [Route("[controller]")]
+AsteroidClient.cs-    public class AsteroidController : ControllerBase
+--
+AsteroidClient.cs-        [HttpGet]
+AsteroidClient.cs:        [Route("list")]
+AsteroidClient.cs-        public async Task<IActionResult> List()
+--
+AsteroidClient.cs-        [HttpPost]
+AsteroidClient.cs:        [Route("publishcheck")]
+AsteroidClient.cs-        public async Task<IActionResult> PublishCheck()
+--
+AsteroidClient.cs-        [HttpPost]
+AsteroidClient.cs:        [Route("publish/{aid:long}")]
+AsteroidClient.cs-        public async Task<IActionResult> Publish(ulong aid)
+--
+AsteroidClient.cs-        [HttpPost]
+AsteroidClient.cs:        [Route("discover/{aid:long}")]
+AsteroidClient.cs-        public async Task<IActionResult> Discover(ulong aid)
+--
+AsteroidClient.cs-        [HttpPost]
+AsteroidClient.cs:        [Route("randomize")]
+AsteroidClient.cs-        public async Task<IActionResult> Randomize([FromBody] List<int> counts)
+--
+AsteroidClient.cs-        [HttpPost]
+AsteroidClient.cs:        [Route("spawn/{pid:long}/{tier:long}/{*model}")]
+AsteroidClient.cs-        public async Task<IActionResult> Spawn(ulong pid, int tier, string model, [FromBody] Vec3 pos)
+--
+AsteroidClient.cs-        [HttpPost]
+AsteroidClient.cs:        [Route("reconcile")]
+AsteroidClient.cs-        public async Task<IActionResult> Reconcile()
+--
+AsteroidClient.cs-        [HttpPost]
+AsteroidClient.cs:        [Route("despawn/{aid:long}")]
+AsteroidClient.cs-        public async Task<IActionResult> Despawn(ulong aid)
+--
+AsteroidClient.cs-        [HttpPost]
+AsteroidClient.cs:        [Route("despawnall")]
+AsteroidClient.cs-        public async Task<IActionResult> DespawnAll()
+--
+AsteroidClient.cs-        [HttpPost]
+AsteroidClient.cs:        [Route("loadsz")]
+AsteroidClient.cs-        public async Task<IActionResult> LoadSZ()
+--
+AsteroidClient.cs-        [HttpPost]
+AsteroidClient.cs:        [Route("dsat/{id:long}/destroy")]
+AsteroidClient.cs-        public async Task<IActionResult> DestroyDSAT(long id)
+--
+BarterClient.cs-    [ApiController]
+BarterClient.cs:    [Route("[controller]")]
+BarterClient.cs-    public class BarterController : ControllerBase
+--
+BarterClient.cs-        [HttpPost]
+BarterClient.cs:        [Route("{owner:long}/start/{peer:long}")]
+BarterClient.cs-        public async Task<IActionResult> Start(ulong owner, ulong peer)
+--
+BarterClient.cs-        [HttpPost]
+BarterClient.cs:        [Route("{pid:long}/cancel")]
+BarterClient.cs-        public async Task<IActionResult> Cancel(ulong pid)
+--
+BarterClient.cs-        [HttpPost]
+BarterClient.cs:        [Route("{pid:long}/update")]
+BarterClient.cs-        public async Task<IActionResult> Update(ulong pid, [FromBody] BarterSessionState requested)
+--
+BlueprintClient.cs-    [ApiController]
+BlueprintClient.cs:    [Route("[controller]")]
+BlueprintClient.cs-    public class BlueprintController : ControllerBase
+--
+BlueprintClient.cs-        [HttpPost]
+BlueprintClient.cs:        [Route("create/{constructId:long}/by/{playerId:long}")]
+BlueprintClient.cs-        public async Task<IActionResult> Create(ulong constructId, ulong playerId, [FromBody] BlueprintCreate bpCreate)
+--
+BlueprintClient.cs-        [HttpPost]
+BlueprintClient.cs:        [Route("compact/{constructId:long}/by/{playerId:long}")]
+BlueprintClient.cs-        public async Task<IActionResult> Compact(ulong constructId, ulong playerId, [FromBody] BlueprintCreate bpCreate)
+--
+BlueprintClient.cs-        [HttpPost]
+BlueprintClient.cs:        [Route("snapshot/{constructId:long}/by/{playerId:long}")]
+BlueprintClient.cs-        public async Task<IActionResult> Create(ulong constructId, ulong playerId, [FromBody] SnapshotCreate bpCreate)
+--
+BlueprintClient.cs-        [HttpPost]
+BlueprintClient.cs:        [Route("admincreate/{constructId:long}/by/{playerId:long}/maxuse/{maxUse:long}/magic/{magic:bool}")]
+BlueprintClient.cs-        public async Task<IActionResult> Create(ulong constructId, ulong playerId, long maxUse, bool magic, [FromBody] BlueprintCreate bpCreate)
+--
+BlueprintClient.cs-        [HttpPost]
+BlueprintClient.cs:        [Route("adminbackup/{constructId:long}")]
+BlueprintClient.cs-        public async Task<IActionResult> Backup(ulong constructId, [FromBody] BlueprintCreate bpCreate)
+--
+BlueprintClient.cs-        [HttpPost]
+BlueprintClient.cs:        [Route("deploy/{blueprintId:long}/by/{playerId:long}")]
+BlueprintClient.cs-        public async Task<IActionResult> Use(ulong blueprintId, ulong playerId, [FromBody] BlueprintDeploy bpDeploy)
+--
+BlueprintClient.cs-        [HttpPost]
+BlueprintClient.cs:        [Route("split/by/{playerId:long}")]
+BlueprintClient.cs-        public async Task<IActionResult> Split(ulong playerId, [FromBody] BlueprintSplit bpSplit)
+--
+BlueprintClient.cs-        [HttpGet]
+BlueprintClient.cs:        [Route("{blueprintId:long}/geometry")]
+BlueprintClient.cs-        public async Task<IActionResult> GetGeometry(ulong blueprintId)
+--
+BlueprintClient.cs-        [HttpGet]
+BlueprintClient.cs:        [Route("{blueprintId:long}/getinfo")]
+BlueprintClient.cs-        public async Task<IActionResult> GetInfo(ulong blueprintId)
+--
+BlueprintClient.cs-        [HttpGet]
+BlueprintClient.cs:        [Route("{blueprintId:long}/export")]
+BlueprintClient.cs-        public async Task<IActionResult> Export(ulong blueprintId, [FromQuery]bool dropprotected)
+--
+BlueprintClient.cs-        [HttpPost]
+BlueprintClient.cs:        [Route("import")]
+BlueprintClient.cs-        public async Task<IActionResult> Import([FromBody] byte[] jsondata, [FromQuery]ulong creatorPlayerId, [FromQuery]ulong creatorOrganizationId)
+--
+BlueprintClient.cs-        [HttpPost]
+BlueprintClient.cs:        [Route("import_same_id")]
+BlueprintClient.cs-        public async Task<IActionResult> ImportSameId([FromBody] byte[] jsondata)
+--
+BookmarkClient.cs-    [ApiController]
+BookmarkClient.cs:    [Route("[controller]")]
+BookmarkClient.cs-    public class BookmarkController : ControllerBase
+--
+BookmarkClient.cs-        [HttpPost]
+BookmarkClient.cs:        [Route("addorupdate/{playerId:long}")]
+BookmarkClient.cs-        public async Task<IActionResult> AddOrUpdate(ulong playerId, [FromBody] Bookmark bookmark)
+--
+BootstrapClient.cs-    [ApiController]
+BootstrapClient.cs:    [Route("[controller]")]
+BootstrapClient.cs-    public class BootstrapController : ControllerBase
+--
+BootstrapClient.cs-        [HttpPost]
+BootstrapClient.cs:        [Route("bootstrap")]
+BootstrapClient.cs-        public async Task<IActionResult> Bootstrap()
+--
+BootstrapClient.cs-        [HttpPost]
+BootstrapClient.cs:        [Route("reload")]
+BootstrapClient.cs-        public async Task<IActionResult> Reload()
+--
+BootstrapClient.cs-        [HttpGet]
+BootstrapClient.cs:        [Route("is_ready")]
+BootstrapClient.cs-        public async Task<IActionResult> IsReady()
+--
+BootstrapClient.cs-        [HttpPost]
+BootstrapClient.cs:        [Route("stop")]
+BootstrapClient.cs-        public async Task<IActionResult> Stop()
+--
+BootstrapClient.cs-        [HttpPost]
+BootstrapClient.cs:        [Route("reminder_start")]
+BootstrapClient.cs-        public async Task<IActionResult> StartReminder()
+--
+ConstructGcClient.cs-
+ConstructGcClient.cs:[Route("[controller]")]
+ConstructGcClient.cs-public class ConstructGCController : Controller
+--
+ConstructGcClient.cs-    [HttpPost]
+ConstructGcClient.cs:    [Route("initialize")]
+ConstructGcClient.cs-    public async Task<IActionResult> Initialize()
+--
+ConstructGcClient.cs-    [HttpPost]
+ConstructGcClient.cs:    [Route("update")]
+ConstructGcClient.cs-    public async Task<IActionResult> Update()
+--
+ConstructGcClient.cs-    [HttpPost]
+ConstructGcClient.cs:    [Route("gc")]
+ConstructGcClient.cs-    public async Task<IActionResult> Gc()
+--
+ConstructGcClient.cs-    [HttpPost]
+ConstructGcClient.cs:    [Route("abandon/{cid:long}")]
+ConstructGcClient.cs-    public async Task<IActionResult> Abandon(ulong cid)
+--
+ConstructGcClient.cs-    [HttpPost]
+ConstructGcClient.cs:    [Route("delete/{cid:long}")]
+ConstructGcClient.cs-    public async Task<IActionResult> Delete(ulong cid)
+--
+ConstructGcClient.cs-    [HttpPost]
+ConstructGcClient.cs:    [Route("set_last_time/{lt}")]
+ConstructGcClient.cs-    public async Task<IActionResult> SetLastTime(string lt)
+--
+ConstructGcClient.cs-    [HttpPost]
+ConstructGcClient.cs:    [Route("check_org/{oid:long}")]
+ConstructGcClient.cs-    public async Task<IActionResult> CheckOrg(ulong oid)
+--
+ConstructGcClient.cs-    [HttpPost]
+ConstructGcClient.cs:    [Route("process")]
+ConstructGcClient.cs-    public async Task<IActionResult> Process([FromBody] SubscriptionChanges changes)
+--
+ConstructGcClient.cs-    [HttpPost]
+ConstructGcClient.cs:    [Route("first_time")]
+ConstructGcClient.cs-    public async Task<IActionResult> FirstTime()
+--
+ConstructsClient.cs-    [ApiController]
+ConstructsClient.cs:    [Route("[controller]")]
+ConstructsClient.cs-    public class ConstructsController : ControllerBase
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("import_fixture")]
+ConstructsClient.cs-        public async Task<IActionResult> ImportFixture([FromBody] string fixturejson)
+--
+ConstructsClient.cs-        [HttpGet]
+ConstructsClient.cs:        [Route("{id}/export_fixture_full")]
+ConstructsClient.cs-        public async Task<IActionResult> ExportFixture(ulong id)
+--
+ConstructsClient.cs-        [HttpGet]
+ConstructsClient.cs:        [Route("{constructId:long}/geometry")]
+ConstructsClient.cs-        public async Task<IActionResult> GetGeometry(ulong constructId)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("addelement/by/{playerId:long}")]
+ConstructsClient.cs-        public async Task<IActionResult> AddElement(ulong playerId, [FromBody] ElementInfo element)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("construct/teleport/{constructId:long}")]
+ConstructsClient.cs-        public async Task<IActionResult> TeleportConstruct(ulong constructId, [FromBody] RelativeLocation destination)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("{constructId:long}/unparent/{parentOverride:long}")]
+ConstructsClient.cs-        public async Task<IActionResult> UnparentConstruct(ulong constructId, [FromBody] UnparentConstructRequest request, ulong? parentOverride)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("{constructId:long}/delete/soft")]
+ConstructsClient.cs-        public async Task<IActionResult> SoftDeleteConstruct(ulong constructId)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("{constructId:long}/delete/hard")]
+ConstructsClient.cs-        public async Task<IActionResult> HardDeleteConstruct(ulong constructId)
+--
+ConstructsClient.cs-        }
+ConstructsClient.cs:        [Route("container/massupdate")]
+ConstructsClient.cs-        public async Task<IActionResult> ContainerMassUpdate([FromBody] ElementPropertyUpdate update)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("is_in_interdiction_zone")]
+ConstructsClient.cs-        public async Task<IActionResult> IsInInterdictionZone([FromBody] Vec3 pos)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("clonefixture")]
+ConstructsClient.cs-        public async Task<IActionResult> CloneFixture([FromBody] ConstructCloneRequest request)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("all_mass_fix")]
+ConstructsClient.cs-        public async Task<IActionResult> AllMassFix()
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("{constructId:long}/reload")]
+ConstructsClient.cs-        public async Task<IActionResult> Reload(ulong constructId)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("{constructId:long}/reload/force")]
+ConstructsClient.cs-        public async Task<IActionResult> ForceReload(ulong constructId)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("{constructId:long}/bump_elements_version")]
+ConstructsClient.cs-        public async Task<IActionResult> BumpElementsVersion(ulong constructId)
+--
+ConstructsClient.cs-        [HttpGet]
+ConstructsClient.cs:        [Route("{constructId:long}/info")]
+ConstructsClient.cs-        public async Task<IActionResult> Info(ulong constructId)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("{constructId:long}/deparent_players")]
+ConstructsClient.cs-        public async Task<IActionResult> DeparentPlayers(ulong constructId)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("{constructId:long}/deparent_constructs")]
+ConstructsClient.cs-        public async Task<IActionResult> DeparentConstructs(ulong constructId)
+--
+ConstructsClient.cs-        [HttpPost]
+ConstructsClient.cs:        [Route("unparent")]
+ConstructsClient.cs-        public async Task<IActionResult> UnparentConstruct([FromBody] UnparentConstructRequest request)
+--
+DispenserClient.cs-    [ApiController]
+DispenserClient.cs:    [Route("[controller]")]
+DispenserClient.cs-    public class DispenserController : ControllerBase
+--
+DispenserClient.cs-        [HttpGet]
+DispenserClient.cs:        [Route("{id:long}/status/from/{pid:long}")]
+DispenserClient.cs-        public async Task<IActionResult> Status(long id, ulong pid)
+--
+DispenserClient.cs-        [HttpPost]
+DispenserClient.cs:        [Route("{id:long}/configure/from/{pid:long}")]
+DispenserClient.cs-        public async Task<IActionResult> Configure(long id, ulong pid, [FromBody] DispenserParameters parms)
+--
+DispenserClient.cs-        [HttpPost]
+DispenserClient.cs:        [Route("{id:long}/use/from/{pid:long}")]
+DispenserClient.cs-        public async Task<IActionResult> Configure(long id, ulong pid)
+--
+ElementManagementClient.cs-    [ApiController]
+ElementManagementClient.cs:    [Route("[controller]")]
+ElementManagementClient.cs-    public class ElementManagementController : ControllerBase
+--
+ElementManagementClient.cs-        [HttpPost]
+ElementManagementClient.cs:        [Route("giveSkin/{pid:long}/{elemId:long}")]
+ElementManagementClient.cs-        public async Task<IActionResult> GiveSkin(ulong pid, ulong elemId, [FromBody] NQ.ElementSkinName skin)
+--
+ElementManagementClient.cs-        [HttpPost]
+ElementManagementClient.cs:        [Route("takeSkin/{pid:long}/{elemId:long}")]
+ElementManagementClient.cs-        public async Task<IActionResult> TakeSkin(ulong pid, ulong elemId, [FromBody] NQ.ElementSkinName skin)
+--
+ElementManagementClient.cs-        [HttpPost]
+ElementManagementClient.cs:        [Route("hasskinfor/{pid:long}/{elemId:long}")]
+ElementManagementClient.cs-        public async Task<IActionResult> PlayerHasSkin(ulong pid, ulong elemId, [FromBody] NQ.ElementSkinName skin)
+--
+FightClient.cs-{
+FightClient.cs:    [Route("[controller]")]
+FightClient.cs-    public class FightController : Controller
+--
+FightClient.cs-        [HttpPost]
+FightClient.cs:        [Route("shieldtakehit/{cid:long}")]
+FightClient.cs-        public async Task<IActionResult> ShieldTakeHit(long cid, [FromBody] WeaponShotPower shotPower)
+--
+FightClient.cs-        [HttpPost]
+FightClient.cs:        [Route("refreshpvptimer/{cid:long}")]
+FightClient.cs-        public async Task<IActionResult> RefreshPvpTimer(long cid)
+--
+FightClient.cs-        [HttpPost]
+FightClient.cs:        [Route("debugresetpvptimer/{cid:long}")]
+FightClient.cs-        public async Task<IActionResult> DebugResetPvpTimer(long cid)
+--
+FightClient.cs-        [HttpPost]
+FightClient.cs:        [Route("debugresetlockdown/{cid:long}")]
+FightClient.cs-        public async Task<IActionResult> DebugResetLockdown(long cid)
+--
+FightClient.cs-        [HttpPost]
+FightClient.cs:        [Route("debugsetlockdown/{cid:long}")]
+FightClient.cs-        public async Task<IActionResult> DebugResetLockdown(long cid, [FromBody] TimePoint target)
+--
+FormalMissionClient.cs-
+FormalMissionClient.cs:[Route("[controller]")]
+FormalMissionClient.cs-public class FormalMissionController : Controller
+--
+FormalMissionClient.cs-    [HttpGet]
+FormalMissionClient.cs:    [Route("all")]
+FormalMissionClient.cs-    public async Task<IActionResult> All([FromQuery] ulong limit, [FromQuery] ulong offset)
+--
+FormalMissionClient.cs-    [HttpPost]
+FormalMissionClient.cs:    [Route("{mid}/delete")]
+FormalMissionClient.cs-    public async Task<IActionResult> Delete(ulong mid)
+--
+FormalMissionClient.cs-    [HttpPost]
+FormalMissionClient.cs:    [Route("fixture/diff")]
+FormalMissionClient.cs-    public async Task<IActionResult> FixtureDiff()
+--
+FormalMissionClient.cs-    [HttpPost]
+FormalMissionClient.cs:    [Route("fixture/apply")]
+FormalMissionClient.cs-    public async Task<IActionResult> FixtureApply()
+--
+FriendListClient.cs-    [ApiController]
+FriendListClient.cs:    [Route("[controller]")]
+FriendListClient.cs-    public class FriendListController : ControllerBase
+--
+FriendListClient.cs-        [HttpPost]
+FriendListClient.cs:        [Route("get/{playerId}")]
+FriendListClient.cs-        public async Task<IActionResult> GetFriendList(ulong playerId)
+--
+FriendListClient.cs-        [HttpPost]
+FriendListClient.cs:        [Route("request/{playerId}")]
+FriendListClient.cs-        public async Task<IActionResult> MakeRequest([FromBody] FriendRequest request, ulong playerId)
+--
+FriendListClient.cs-        [HttpPost]
+FriendListClient.cs:        [Route("answer/{playerId}")]
+FriendListClient.cs-        public async Task<IActionResult> AnswerRequest([FromBody] FriendRequestResponse response, ulong playerId)
+--
+FriendListClient.cs-        [HttpPost]
+FriendListClient.cs:        [Route("remove/{playerId}")]
+FriendListClient.cs-        public async Task<IActionResult> RemoveFriendship([FromBody] PlayerId removeId, ulong playerId)
+--
+GameplayBankClient.cs-    [ApiController]
+GameplayBankClient.cs:    [Route("[controller]")]
+GameplayBankClient.cs-    public class GameplayBankController : ControllerBase
+--
+GameplayBankClient.cs-        [HttpGet]
+GameplayBankClient.cs:        [Route("{pid:long}")]
+GameplayBankClient.cs-        public IActionResult Get(long pid)
+--
+GameplayBankClient.cs-        [HttpGet]
+GameplayBankClient.cs:        [Route("{name}")]
+GameplayBankClient.cs-        public IActionResult Get(string name)
+--
+IndustryUnitClient.cs-    [ApiController]
+IndustryUnitClient.cs:    [Route("[controller]")]
+IndustryUnitClient.cs-    public class IndustryController : ControllerBase
+--
+IndustryUnitClient.cs-        [HttpGet]
+IndustryUnitClient.cs:        [Route("{id:long}/status")]
+IndustryUnitClient.cs-        public async Task<IActionResult> Status(ulong id)
+--
+IndustryUnitClient.cs-        [HttpPost]
+IndustryUnitClient.cs:        [Route("{id:long}/setrecipe/{rid:long}/{pid:long}")]
+IndustryUnitClient.cs-        public async Task<IActionResult> SetRecipe(ulong id, ulong rid, ulong pid)
+--
+IndustryUnitClient.cs-        [HttpPost]
+IndustryUnitClient.cs:        [Route("{id:long}/start/{pid:long}")]
+IndustryUnitClient.cs-        public async Task<IActionResult> Start(ulong id, ulong pid, [FromBody] IndustryStart req)
+--
+IndustryUnitClient.cs-        [HttpPost]
+IndustryUnitClient.cs:        [Route("{id:long}/softstop")]
+IndustryUnitClient.cs-        public async Task<IActionResult> SoftStop(ulong id)
+--
+IndustryUnitClient.cs-        [HttpPost]
+IndustryUnitClient.cs:        [Route("{id:long}/hardstop")]
+IndustryUnitClient.cs-        public async Task<IActionResult> HardStop(ulong id, [FromBody] IndustryStopRequest isr)
+--
+IndustryUnitClient.cs-        [HttpPost]
+IndustryUnitClient.cs:        [Route("{id:long}/claimproducts")]
+IndustryUnitClient.cs-        public async Task<IActionResult> ClaimProducts(ulong id, [FromBody] IndustryClaimProducts icp)
+--
+IndustryUnitClient.cs-        [HttpPost]
+IndustryUnitClient.cs:        [Route("{id:long}/notifications")]
+IndustryUnitClient.cs-        public async Task<IActionResult> SetNotifications(ulong id, [FromBody] IndustrySetNotificationsState isns)
+--
+IndustryUnitClient.cs-        [HttpPost]
+IndustryUnitClient.cs:        [Route("{id:long}/setoutput/{cid:long}")]
+IndustryUnitClient.cs-        public async Task<IActionResult> SetOutput(ulong id, ulong cid)
+--
+IndustryUnitClient.cs-        [HttpPost]
+IndustryUnitClient.cs:        [Route("{id:long}/addinput/{cid:long}")]
+IndustryUnitClient.cs-        public async Task<IActionResult> AddInput(ulong id, ulong cid)
+--
+IndustryUnitClient.cs-        [HttpPost]
+IndustryUnitClient.cs:        [Route("{id:long}/removeinput/{cid:long}")]
+IndustryUnitClient.cs-        public async Task<IActionResult> RemoveInput(ulong id, ulong cid)
+--
+IndustryUnitClient.cs-        [HttpGet]
+IndustryUnitClient.cs:        [Route("{id:long}/recipe")]
+IndustryUnitClient.cs-        public async Task<IActionResult> Recipe(ulong id)
+--
+IndustryUnitClient.cs-        [HttpPost]
+IndustryUnitClient.cs:        [Route("{id:long}/break")]
+IndustryUnitClient.cs-        public async Task<IActionResult> Break(ulong id)
+--
+IndustryUnitClient.cs-        [HttpGet]
+IndustryUnitClient.cs:        [Route("{id:long}/statistics")]
+IndustryUnitClient.cs-        public async Task<IActionResult> Statistics(ulong id)
+--
+IndustryUnitClient.cs-        [HttpGet]
+IndustryUnitClient.cs:        [Route("all/statistics")]
+IndustryUnitClient.cs-        public async Task<IActionResult> Statistics()
+--
+InventoryController.cs-    [ApiController]
+InventoryController.cs:    [Route("[controller]")]
+InventoryController.cs-    public class InventoryController : ControllerBase
+--
+InventoryController.cs-        [HttpPost]
+InventoryController.cs:        [Route("{pid:long}/wallet/set/{amount:long}")]
+InventoryController.cs-        public async Task<IActionResult> WalletSet(ulong pid, long amount)
+--
+InventoryController.cs-        [HttpPost]
+InventoryController.cs:        [Route("{pid:long}/wallet/add/{amount:long}")]
+InventoryController.cs-        public async Task<IActionResult> WalletAdd(ulong pid, long amount)
+--
+InventoryController.cs-        [HttpGet]
+InventoryController.cs:        [Route("{pid:long}/wallet")]
+InventoryController.cs-        public async Task<IActionResult> WalletGet(ulong pid)
+--
+InventoryController.cs-        [HttpGet]
+InventoryController.cs:        [Route("{pid:int}/throw")]
+InventoryController.cs-        public IActionResult ThrowSomething(int pid)
+--
+ItemBankClient.cs-    [ApiController]
+ItemBankClient.cs:    [Route("[controller]")]
+ItemBankClient.cs-    public class ItemBankController : Controller
+--
+ItemBankClient.cs-        [HttpGet]
+ItemBankClient.cs:        [Route("volumefor/{id:long}/{qty:long}")]
+ItemBankClient.cs-        public Task<IActionResult> VolumeFor(long id, long qty)
+--
+ItemBankClient.cs-        [HttpGet]
+ItemBankClient.cs:        [Route("volumeformarket/{id:long}/{qty:long}")]
+ItemBankClient.cs-        public Task<IActionResult> VolumeForMarket(long id, long qty)
+--
+ItemBankClient.cs-        [HttpGet]
+ItemBankClient.cs:        [Route("voxelmaterials")]
+ItemBankClient.cs-        public Task<IActionResult> GetVoxelMaterials()
+--
+ItemBankClient.cs-        [HttpGet]
+ItemBankClient.cs:        [Route("childrenids/{name}")]
+ItemBankClient.cs-        public Task<IActionResult> ChildrenIds(string name)
+--
+ItemBankClient.cs-        [HttpGet]
+ItemBankClient.cs:        [Route("nametoid/{name}")]
+ItemBankClient.cs-        public Task<IActionResult> NameToId(string name)
+--
+ItemBankClient.cs-        [HttpGet]
+ItemBankClient.cs:        [Route("public/{name}")]
+ItemBankClient.cs-        public Task<IActionResult> PublicVersion(string name)
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("marketrecords/trigger")]
+ItemBankClient.cs-        public async Task<IActionResult> MarketRecordsTrigger()
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("marketrecords/backlog/{s}/{e}")]
+ItemBankClient.cs-        public async Task<IActionResult> MarketRecordsBacklog(string s, string e)
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("marketrecords/start")]
+ItemBankClient.cs-        public async Task<IActionResult> MarketRecordsStart()
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("marketrecords/reset")]
+ItemBankClient.cs-        public async Task<IActionResult> MarketRecordsReset()
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("seedmarkets")]
+ItemBankClient.cs-        public async Task<IActionResult> MarketSeed()
+--
+ItemBankClient.cs-        [HttpGet]
+ItemBankClient.cs:        [Route("marketseeddiiff")]
+ItemBankClient.cs-        public async Task<IActionResult> MarketSeedDiff()
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("modify")]
+ItemBankClient.cs-        public async Task<IActionResult> Modify([FromBody] string yaml)
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("org_gc_setup")]
+ItemBankClient.cs-        public async Task<IActionResult> OrgGcSetup()
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("org_gc_trigger")]
+ItemBankClient.cs-        public async Task<IActionResult> OrgGcTrigger()
+--
+ItemBankClient.cs-        }
+ItemBankClient.cs:        [Route("alien/reconcile")]
+ItemBankClient.cs-        public async Task<IActionResult> AlienReconcile()
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("alien/spawn/{id:long}")]
+ItemBankClient.cs-        public async Task<IActionResult> AlienReconcile(long id, [FromBody] Vec3 pos)
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("market/set_all_taxes")]
+ItemBankClient.cs-        public async Task<IActionResult> MarketSetTaxes([FromBody] MarketTaxes taxes)
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("sentinel/{id:long}/spawn/{mission}")]
+ItemBankClient.cs-        public async Task<IActionResult> SentinelSpawn(long id, string mission)
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("sentinel/{id:long}/teardown")]
+ItemBankClient.cs-        public async Task<IActionResult> Teardown(long id)
+--
+ItemBankClient.cs-        [HttpGet]
+ItemBankClient.cs:        [Route("sentinel/{id:long}/scan/{cid:long}/{mid:long}")]
+ItemBankClient.cs-        public async Task<IActionResult> ScanShip(long id, long cid, long mid)
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("sentinel/{id:long}/reload")]
+ItemBankClient.cs-        public async Task<IActionResult> SentinelReload(long id)
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("sentinel/spawnboss/{model}/{position}")]
+ItemBankClient.cs-        public async Task<IActionResult> SpawnBoss(string model, string position)
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("sentinel/despawnboss/{constructId}")]
+ItemBankClient.cs-        public async Task<IActionResult> SentinelDespawnBoss(ulong constructId)
+--
+ItemBankClient.cs-        [HttpPost]
+ItemBankClient.cs:        [Route("sentinel/bosscheck")]
+ItemBankClient.cs-        public async Task<IActionResult> SentinelBossCheck()
+--
+LocatorClient.cs-    [ApiController]
+LocatorClient.cs:    [Route("[controller]")]
+LocatorClient.cs-    public class LocatorController : ControllerBase
+--
+LocatorClient.cs-        [HttpPost]
+LocatorClient.cs:        [Route("batch/by/{pid:long}")]
+LocatorClient.cs-        public async Task<IActionResult> Batch(ulong pid, [FromBody] LocationRequest v)
+--
+LocatorClient.cs-        [HttpPost]
+LocatorClient.cs:        [Route("all/by/{pid:long}")]
+LocatorClient.cs-        public async Task<IActionResult> All(ulong pid, [FromBody] LocationRequest v)
+--
+LocatorClient.cs-        [HttpPost]
+LocatorClient.cs:        [Route("locateitem")]
+LocatorClient.cs-        public async Task<IActionResult> LocateItem([FromBody] ItemInfo item)
+--
+MetaClient.cs-    [ApiController]
+MetaClient.cs:    [Route("[controller]")]
+MetaClient.cs-    public class MetaController : ControllerBase
+--
+MetaClient.cs-        [HttpPost]
+MetaClient.cs:        [Route("registermod")]
+MetaClient.cs-        public async Task<IActionResult> RegisterMod([FromBody]ModRegistration mod)
+--
+MetaClient.cs-        [HttpPost]
+MetaClient.cs:        [Route("metamessage")]
+MetaClient.cs-        public Task<IActionResult> MetaMessageRequest([FromBody]MetaMessage msg)
+--
+MetaClient.cs-        [HttpPost]
+MetaClient.cs:        [Route("metacall")]
+MetaClient.cs-        public async Task<IActionResult> MetaCallRequest([FromBody]MetaCall call)
+--
+MiningUnitClient.cs-    [ApiController]
+MiningUnitClient.cs:    [Route("[controller]")]
+MiningUnitClient.cs-    public class MinerController : ControllerBase
+--
+MiningUnitClient.cs-        [HttpPost]
+MiningUnitClient.cs:        [Route("{id:long}/setoutput/{cid:long}")]
+MiningUnitClient.cs-        public async Task<IActionResult> SetOutput(ulong id, ulong cid)
+--
+MiningUnitClient.cs-        [HttpPost]
+MiningUnitClient.cs:        [Route("{id:long}/start/by/{pid:long}")]
+MiningUnitClient.cs-        public async Task<IActionResult> Start(ulong id, ulong pid)
+--
+MiningUnitClient.cs-        [HttpPost]
+MiningUnitClient.cs:        [Route("{id:long}/stop/by/{pid:long}")]
+MiningUnitClient.cs-        public async Task<IActionResult> Stop(ulong id, ulong pid)
+--
+MiningUnitClient.cs-        [HttpPost]
+MiningUnitClient.cs:        [Route("{id:long}/setore/{o:long}/by/{pid:long}")]
+MiningUnitClient.cs-        public async Task<IActionResult> SetOre(ulong id, ulong o, ulong pid)
+--
+MiningUnitClient.cs-        [HttpPost]
+MiningUnitClient.cs:        [Route("{id:long}/reset_timer")]
+MiningUnitClient.cs-        public async Task<IActionResult> ResetTimer(ulong id)
+--
+MiningUnitClient.cs-        [HttpGet]
+MiningUnitClient.cs:        [Route("{id:long}/state")]
+MiningUnitClient.cs-        public async Task<IActionResult> State(ulong id)
+--
+MiningUnitClient.cs-        [HttpGet]
+MiningUnitClient.cs:        [Route("pool/{cid:long}/{tid:long}/{ore:long}")]
+MiningUnitClient.cs-        public async Task<IActionResult> Pool(ulong cid, int tid, ulong ore)
+--
+MissionClient.cs-
+MissionClient.cs:[Route("[controller]")]
+MissionClient.cs-public class MissionController : Controller
+--
+MissionClient.cs-    [HttpGet]
+MissionClient.cs:    [Route("all")]
+MissionClient.cs-    public async Task<IActionResult> All([FromQuery] ulong limit, [FromQuery] ulong offset)
+--
+MissionClient.cs-    [HttpPost]
+MissionClient.cs:    [Route("{mid}/delete")]
+MissionClient.cs-    public async Task<IActionResult> Delete(ulong mid)
+--
+Notification/NotificationClient.cs-    [ApiController]
+Notification/NotificationClient.cs:    [Route("[controller]")]
+Notification/NotificationClient.cs-    public class NotificationController : ControllerBase
+--
+Notification/NotificationClient.cs-        [HttpGet]
+Notification/NotificationClient.cs:        [Route("{pid:long}/all")]
+Notification/NotificationClient.cs-        public async Task<IActionResult> AllNotifications(ulong pid)
+--
+Notification/NotificationClient.cs-        [HttpGet]
+Notification/NotificationClient.cs:        [Route("{pid:long}/unsent")]
+Notification/NotificationClient.cs-        public async Task<IActionResult> AllUnsentNotifications(ulong pid)
+--
+Notification/NotificationClient.cs-        [HttpPost]
+Notification/NotificationClient.cs:        [Route("{pid:long}/delete/")]
+Notification/NotificationClient.cs-        public async Task<IActionResult> DeleteNotification(ulong pid, [FromBody] NotificationId notificationId)
+--
+Notification/NotificationClient.cs-        [HttpPost]
+Notification/NotificationClient.cs:        [Route("{pid:long}/delete_all")]
+Notification/NotificationClient.cs-        public async Task<IActionResult> DeleteAllNotifications(ulong pid)
+--
+Notification/NotificationClient.cs-        [HttpPost]
+Notification/NotificationClient.cs:        [Route("{pid:long}/delete_expired")]
+Notification/NotificationClient.cs-        public async Task<IActionResult> DeleteExpiredNotifications(ulong pid)
+--
+Notification/NotificationClient.cs-        [HttpPost]
+Notification/NotificationClient.cs:        [Route("{pid:long}/add")]
+Notification/NotificationClient.cs-        public async Task<IActionResult> AddNotification(ulong pid, [FromBody] NotificationMessage notification)
+--
+Notification/NotificationClient.cs-        [HttpPost]
+Notification/NotificationClient.cs:        [Route("admin/add_all")]
+Notification/NotificationClient.cs-        public async Task<IActionResult> AddAllNotification([FromBody] NotificationMessage notification)
+--
+OrganizationClient.cs-    [ApiController]
+OrganizationClient.cs:    [Route("[controller]")]
+OrganizationClient.cs-    public class OrganizationController : ControllerBase
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/status/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> Status(ulong id, ulong pid)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/alliances")]
+OrganizationClient.cs-        public async Task<IActionResult> Alliances(ulong id)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/enrolments/limit/{limit:long}/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> Alliances(ulong id, ulong limit, ulong pid)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/setdescription/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> SetDescription(ulong id, ulong pid, [FromBody] OrganizationDescription desc)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/setname")]
+OrganizationClient.cs-        public async Task<IActionResult> SetName(ulong id, [FromBody] OrganizationDescription desc)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/update/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> Update(ulong id, ulong pid, [FromBody] OrganizationCreationData desc)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/setlogo/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> SetLogo(ulong id, ulong pid, [FromBody] OrganizationDescription desc)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/joinrequest/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> JoinRequest(ulong id, ulong pid, [FromBody] JoinRequest req)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/canceljoinrequest/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> JoinRequestCancel(ulong id, ulong pid, [FromBody] JoinRequest req)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/joinrequests/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> JoinRequests(ulong id, ulong pid)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/joinresponse/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> JoinResponse(ulong id, ulong pid, [FromBody] JoinResponse resp)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/recruitoffer/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> RecruitingOffer(ulong id, ulong pid, [FromBody] RecruitingOffer req)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/cancelrecruitoffer/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> RecruitingOfferCancel(ulong id, ulong pid, [FromBody] RecruitingOffer req)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/recruitresponse/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> RecruitingResponse(ulong id, ulong pid, [FromBody] JoinResponse req)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/recruitoffers/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> RecruitingOffers(ulong id, ulong pid)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/removemember/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> RemoveMember(ulong id, ulong pid, [FromBody] OrganizationKickMember okm)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/createvote/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> CreateVote(ulong id, ulong pid, [FromBody] VoteDefinition vote)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/livevotes/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> GetLiveVotesPost(ulong id, ulong pid, [FromBody] PastVotes query)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/pastvotes/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> GetPastVotesPost(ulong id, ulong pid, [FromBody] PastVotes query)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/livevotes/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> GetLiveVotes(ulong id, ulong pid, [FromBody] PastVotes query)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/pastvotes/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> GetPastVotes(ulong id, ulong pid, [FromBody] PastVotes query)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/joinresponseorganization/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> JoinResponseOrganization(ulong id, ulong pid, [FromBody] JoinResponse req)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/createparent/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> CreateParent(ulong id, ulong pid, [FromBody] OrganizationCreationData req)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/delete/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> Delete(ulong id, ulong pid)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/admin/applyvote/{k:long}/{tp:long}/{to:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> ApplyVote(ulong id, ulong k, ulong tp, ulong to)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/members")]
+OrganizationClient.cs-        public async Task<IActionResult> SearchMembers(ulong id, [FromBody] OrganizationMemberSearch search)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/members")]
+OrganizationClient.cs-        public async Task<IActionResult> SearchMembersPost(ulong id, [FromBody] OrganizationMemberSearch search)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/news/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> NewsGetPost(ulong id, ulong pid, [FromBody] OrganizationNewsSearch query)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/news/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> NewsGet(ulong id, ulong pid, [FromBody] OrganizationNewsSearch query)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/news/markread/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> NewsMarkRead(ulong id, ulong pid, [FromBody] OrganizationNewsRead mr)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/news/post/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> NewsPost(ulong id, ulong pid, [FromBody] OrganizationNewsPost post)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/news/pin/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> NewsPin(ulong id, ulong pid, [FromBody] OrganizationNewsPin pin)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/news/delete/from/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> NewsDelete(ulong id, ulong pid, [FromBody] OrganizationNewsDelete del)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/deactivate")]
+OrganizationClient.cs-        public async Task<IActionResult> Deactivate(long id)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/kickhistory")]
+OrganizationClient.cs-        public async Task<IActionResult> KickHistory(long id, [FromBody] OrganizationKickHistoryRequest request)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/kickhistory")]
+OrganizationClient.cs-        public async Task<IActionResult> KickHistoryPost(long id, [FromBody] OrganizationKickHistoryRequest request)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("byslug/{slug}")]
+OrganizationClient.cs-        public async Task<IActionResult> BySlug(string slug)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/effectivesuperlegate")]
+OrganizationClient.cs-        public async Task<IActionResult> EffectiveSuperLegate(long id)
+--
+OrganizationClient.cs-        [HttpGet]
+OrganizationClient.cs:        [Route("{id:long}/cancreateconstruct/{pid:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> CanCreateConstruct(long id, long pid)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/wallet/add/{amount:long}")]
+OrganizationClient.cs-        public async Task<IActionResult> WalletAdd(ulong id, long amount)
+--
+OrganizationClient.cs-        [HttpPost]
+OrganizationClient.cs:        [Route("{id:long}/chatmessage")]
+OrganizationClient.cs-        public async Task<IActionResult> ChatMessage(ulong id, [FromBody] MessageContent msg)
+--
+OrganizationDirectoryClient.cs-    [ApiController]
+OrganizationDirectoryClient.cs:    [Route("[controller]")]
+OrganizationDirectoryClient.cs-    public class OrganizationDirectoryController : ControllerBase
+--
+OrganizationDirectoryClient.cs-        [HttpGet]
+OrganizationDirectoryClient.cs:        [Route("search/by/{pid}")]
+OrganizationDirectoryClient.cs-        public async Task<IActionResult> Search(ulong pid, [FromBody] OrganizationSearch search)
+--
+OrganizationDirectoryClient.cs-        [HttpPost]
+OrganizationDirectoryClient.cs:        [Route("search/by/{pid}")]
+OrganizationDirectoryClient.cs-        public async Task<IActionResult> SearchPost(ulong pid, [FromBody] OrganizationSearch search)
+--
+OrganizationDirectoryClient.cs-        [HttpGet]
+OrganizationDirectoryClient.cs:        [Route("myorganizations")]
+OrganizationDirectoryClient.cs-        public async Task<IActionResult> MyOrganizations(ulong pid, [FromBody] EntityId entity)
+--
+OrganizationDirectoryClient.cs-        [HttpGet]
+OrganizationDirectoryClient.cs:        [Route("myorganizationrequests/from/{pid}")]
+OrganizationDirectoryClient.cs-        public async Task<IActionResult> MyOrganizationRequests(ulong pid, [FromBody] EntityId entityId)
+--
+PlanetTerritoryClient.cs-    [ApiController]
+PlanetTerritoryClient.cs:    [Route("[controller]")]
+PlanetTerritoryClient.cs-    public class TerritoryController : ControllerBase
+--
+PlanetTerritoryClient.cs-        [HttpPost]
+PlanetTerritoryClient.cs:        [Route("claim/by/{playerId:long}")]
+PlanetTerritoryClient.cs-        public async Task<IActionResult> ClaimTerritory(ulong playerId, [FromBody] TerritoryClaim claim)
+--
+PlanetTerritoryClient.cs-        [HttpPost]
+PlanetTerritoryClient.cs:        [Route("claim/by/specialOwner/{playerId:long}")]
+PlanetTerritoryClient.cs-        public async Task<IActionResult> ClaimTerritoryBySpecialOwner(ulong playerId, [FromBody] TerritoryClaim claim)
+--
+PlanetTerritoryClient.cs-        [HttpPost]
+PlanetTerritoryClient.cs:        [Route("release/by/{playerId:long}")]
+PlanetTerritoryClient.cs-        public async Task<IActionResult> ReleaseTerritory(ulong playerId, [FromBody] TerritoryRelease release)
+--
+PlanetTerritoryClient.cs-        [HttpPost]
+PlanetTerritoryClient.cs:        [Route("update/fixtures/planet/{planetId:long}")]
+PlanetTerritoryClient.cs-        public async Task<IActionResult> UpdateTerritoryFixtures(ulong planetId, [FromBody] List<TerritoryDetails> territories)
+--
+PlanetTerritoryClient.cs-        [HttpPost]
+PlanetTerritoryClient.cs:        [Route("update/by/{playerId:long}")]
+PlanetTerritoryClient.cs-        public async Task<IActionResult> UpdateTerritory(ulong playerId, [FromBody] TerritoryUpdate update)
+--
+PlanetTerritoryClient.cs-        [HttpGet]
+PlanetTerritoryClient.cs:        [Route("map/{planetId:long}")]
+PlanetTerritoryClient.cs-        public async Task<IActionResult> GetTerritoryMap(ulong planetId)
+--
+PlanetTerritoryClient.cs-        [HttpGet]
+PlanetTerritoryClient.cs:        [Route("tile/{planetId:long}/{tileIndex:int}")]
+PlanetTerritoryClient.cs-        public async Task<IActionResult> GetTerritoryTile(ulong planetId, uint tileIndex)
+--
+PlanetTerritoryClient.cs-        [HttpPost]
+PlanetTerritoryClient.cs:        [Route("tile/pos/{planetId:long}")]
+PlanetTerritoryClient.cs-        public async Task<IActionResult> GetTerritoryTileByPos(ulong planetId, [FromBody] Vec3 pos)
+--
+PlanetTerritoryClient.cs-        [HttpPost]
+PlanetTerritoryClient.cs:        [Route("tile/pos_safe/{planetId:long}")]
+PlanetTerritoryClient.cs-        public async Task<IActionResult> GetTerritoryTileByPosSafe(ulong planetId, [FromBody] Vec3 pos)
+--
+PlayerClient.cs-{
+PlayerClient.cs:    [Route("[controller]")]
+PlayerClient.cs-    public class PlayerController : Controller
+--
+PlayerClient.cs-        [HttpPost]
+PlayerClient.cs:        [Route("ondeath/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> OnDeath(long playerId)
+--
+PlayerClient.cs-        [HttpPost]
+PlayerClient.cs:        [Route("createorganization/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> CreateOrganization(ulong playerId, [FromBody] OrganizationCreationData req)
+--
+PlayerClient.cs-
+PlayerClient.cs:        [Route("admin/promote/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> PromoteAdmin(ulong playerId)
+--
+PlayerClient.cs-        [HttpPost]
+PlayerClient.cs:        [Route("admin/demote/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> DemoteAdmin(ulong playerId)
+--
+PlayerClient.cs-        [HttpGet]
+PlayerClient.cs:        [Route("bycommunity/{cid}")]
+PlayerClient.cs-        public async Task<IActionResult> ByCommunity(ulong cid)
+--
+PlayerClient.cs-        [HttpGet]
+PlayerClient.cs:        [Route("bycommunity/{cid}/{name}")]
+PlayerClient.cs-        public async Task<IActionResult> ByCommunity(ulong cid, string name)
+--
+PlayerClient.cs-        [HttpGet]
+PlayerClient.cs:        [Route("myorganizations/{playerId}/{level}")]
+PlayerClient.cs-        public async Task<IActionResult> MyOrganizations(ulong playerId, int level)
+--
+PlayerClient.cs-        [HttpGet]
+PlayerClient.cs:        [Route("organizationsincommon/{playerId}/with/{peer}")]
+PlayerClient.cs-        public async Task<IActionResult> OrgsInCommon(ulong playerId, ulong peer)
+--
+PlayerClient.cs-        [HttpGet]
+PlayerClient.cs:        [Route("currentsandbox/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> CurrentSandbox(ulong playerId)
+--
+PlayerClient.cs-        [HttpPost]
+PlayerClient.cs:        [Route("checkcanuse/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> CheckCanUse(long playerId, [FromBody] ElementUseQuery query)
+--
+PlayerClient.cs-        [HttpDelete]
+PlayerClient.cs:        [Route("delete/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> OnDeleted(long playerId)
+--
+PlayerClient.cs-        [HttpPost]
+PlayerClient.cs:        [Route("debug/triggerplayerinventorytimer/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> DebugPlayerInventoryTriggerTimer(long playerId, [FromBody] PlayerPositionUpdate pupdate)
+--
+PlayerClient.cs-        [HttpPost]
+PlayerClient.cs:        [Route("loginstate/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> GetPlayerLoginState(long playerId, [FromBody] AuthUserInfo authInfo)
+--
+PlayerClient.cs-        [HttpPost]
+PlayerClient.cs:        [Route("create/avatar/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> CreateAvatar(long playerId, [FromBody] PlayerCreationInfo creationInfo)
+--
+PlayerClient.cs-        [HttpPost]
+PlayerClient.cs:        [Route("{playerId}/setdynamicplayerproperty/{fromServer}")]
+PlayerClient.cs-        public async Task<IActionResult> SetDynamicProperty(long playerId, [FromBody] PlayerPropertyUpdate update, bool fromServer = false)
+--
+PlayerClient.cs-        }
+PlayerClient.cs:        [Route("land/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> Land(long playerId)
+--
+PlayerClient.cs-        [HttpPost]
+PlayerClient.cs:        [Route("teleport/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> PlayerTeleport(long playerId, [FromBody] RelativeLocation location)
+--
+PlayerClient.cs-        }
+PlayerClient.cs:        [Route("{playerId}/settings")]
+PlayerClient.cs-        public async Task<IActionResult> SetPlayerSettings(long playerId, [FromBody] DeltaSettings settings)
+--
+PlayerClient.cs-        }
+PlayerClient.cs:        [Route("reset/{playerId}")]
+PlayerClient.cs-        public async Task<IActionResult> ResetPlayer(long playerId)
+--
+PlayerDirectoryClient.cs-    [ApiController]
+PlayerDirectoryClient.cs:    [Route("[controller]")]
+PlayerDirectoryClient.cs-    public class PlayerDirectoryController : ControllerBase
+--
+PlayerDirectoryClient.cs-        [HttpGet]
+PlayerDirectoryClient.cs:        [Route("search/like/{pattern}")]
+PlayerDirectoryClient.cs-        public async Task<IActionResult> SearchLike(PlayerName pattern)
+--
+PlayerDirectoryClient.cs-        [HttpPost]
+PlayerDirectoryClient.cs:        [Route("disconnect/{id}")]
+PlayerDirectoryClient.cs-        public async Task<IActionResult> Disconnect(ulong id, [FromBody] DisconnectionNotification reason)
+--
+PlayerDirectoryClient.cs-        [HttpPost]
+PlayerDirectoryClient.cs:        [Route("disconnect/all")]
+PlayerDirectoryClient.cs-        public async Task<IActionResult> DisconnectAll()
+--
+PlayerDirectoryClient.cs-        [HttpPost]
+PlayerDirectoryClient.cs:        [Route("popup/to/{id}")]
+PlayerDirectoryClient.cs-        public async Task<IActionResult> PopupTo(ulong id, [FromBody] PopupMessage message)
+--
+PlayerDirectoryClient.cs-        [HttpPost]
+PlayerDirectoryClient.cs:        [Route("popup/all")]
+PlayerDirectoryClient.cs-        public async Task<IActionResult> PopupTo([FromBody] PopupMessage message)
+--
+PublicController.cs-    [ApiController]
+PublicController.cs:    [Route("[controller]")]
+PublicController.cs-    public class PublicController : ControllerBase
+--
+PublicController.cs-        [HttpGet]
+PublicController.cs:        [Route("elements/{constructId:long}/lod/{lod:int}")]
+PublicController.cs-        [InjectEtag]
+--
+RDMSClient.cs-{
+RDMSClient.cs:    [Route("[controller]")]
+RDMSClient.cs-    public class RDMSController : Controller
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("getrights/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> GetRights(long playerId, [FromBody] AssetId asset)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("getrightsoradmin/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> GetRightsOrAdmin(long playerId, [FromBody] AssetId asset)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("registry/get/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> RegistryGet(long playerId, [FromBody] EntityId owner)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("actor/create/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> ActorCreate(long playerId, [FromBody] ActorData actor)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("actor/delete/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> ActorDelete(long playerId, [FromBody] ActorSelector selector)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("actor/update/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> ActorUpdate(long playerId, [FromBody] ActorData data)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("actor/getdata/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> ActorGetContent(long playerId, [FromBody] ActorSelector selector)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("actor/getdatalist/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> ActorGetFromOwner(long playerId, [FromBody] EntityId owner)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("tag/create/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> TagCreate(long playerId, [FromBody] TagData tag)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("tag/createorget/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> TagCreateOrGet(long playerId, [FromBody] TagData tag)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("tag/update/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> TagUpdate(long playerId, [FromBody] TagData context)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("tag/delete/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> TagDelete(long playerId, [FromBody] TagSelector selector)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("tag/getdata/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> TagData(long playerId, [FromBody] TagSelector selector)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("tag/getdatalist/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> TagGetDataList(long playerId, [FromBody] EntityId owner)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("asset/update/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> AssetUpdate(long playerId, [FromBody] AssetUpdateTags update)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("asset/update")]
+RDMSClient.cs-        public async Task<IActionResult> AssetUpdate([FromBody] AssetUpdateTags update)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("asset/gettaglist/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> AssetGetTagList(long playerId, [FromBody] AssetId asset)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("asset/getlistfromtag/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> AssetGetListFromTag(long playerId, [FromBody] TagSelector selector)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("policy/create/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> PolicyCreate(long playerId, [FromBody] PolicyData policy)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("policy/delete/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> PolicyDelete(long playerId, [FromBody] PolicySelector selector)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("policy/update/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> PolicyUpdate(long playerId, [FromBody] PolicyData data)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("policy/getdata/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> PolicyGetData(long playerId, [FromBody] PolicySelector selector)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("policy/getdatalist/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> PolicyGetDataList(long playerId, [FromBody] EntityId owner)
+--
+RDMSClient.cs-        [HttpPost]
+RDMSClient.cs:        [Route("clearcache/{playerId:long}")]
+RDMSClient.cs-        public async Task<IActionResult> ClearCache(long playerId)
+--
+RecipeClient.cs-    [ApiController]
+RecipeClient.cs:    [Route("[controller]")]
+RecipeClient.cs-    public class RecipeController : ControllerBase
+--
+RecipeClient.cs-        [HttpGet]
+RecipeClient.cs:        [Route("{pid:long}/get")]
+RecipeClient.cs-        public async Task<IActionResult> Get(ulong pid)
+--
+RecipeClient.cs-        [HttpGet]
+RecipeClient.cs:        [Route("{pid:long}/get_queue")]
+RecipeClient.cs-        public async Task<IActionResult> GetQueue(ulong pid)
+--
+RecipeClient.cs-        [HttpGet]
+RecipeClient.cs:        [Route("{pid:long}/enqueue")]
+RecipeClient.cs-        public async Task<IActionResult> Enqueue(ulong pid, [FromBody] RecipeRequest rr)
+--
+RecipeClient.cs-        [HttpGet]
+RecipeClient.cs:        [Route("{pid:long}/resume")]
+RecipeClient.cs-        public async Task<IActionResult> Resume(ulong pid)
+--
+RecipeClient.cs-        [HttpGet]
+RecipeClient.cs:        [Route("{pid:long}/abort")]
+RecipeClient.cs-        public async Task<IActionResult> Abort(ulong pid, [FromBody] RecipeStatusId rsi)
+--
+RecipeClient.cs-        [HttpGet]
+RecipeClient.cs:        [Route("{pid:long}/collect")]
+RecipeClient.cs-        public async Task<IActionResult> Collect(ulong pid)
+--
+RecipeClient.cs-        [HttpGet]
+RecipeClient.cs:        [Route("{pid:long}/move")]
+RecipeClient.cs-        public async Task<IActionResult> Move(ulong pid, [FromBody] RecipeMoveAfter rma)
+--
+RecipeClient.cs-        [HttpPost]
+RecipeClient.cs:        [Route("{pid:long}/clear_abort")]
+RecipeClient.cs-        public async Task<IActionResult> ClearAbort(ulong pid)
+--
+RecipeClient.cs-        [HttpPost]
+RecipeClient.cs:        [Route("{pid:long}/clear_all")]
+RecipeClient.cs-        public async Task<IActionResult> ClearAll(ulong pid)
+--
+RecipeClient.cs-        [HttpPost]
+RecipeClient.cs:        [Route("{pid:long}/instant_craft")]
+RecipeClient.cs-        public async Task<IActionResult> InstantCraft(ulong pid)
+--
+RecipeClient.cs-        [HttpGet]
+RecipeClient.cs:        [Route("{pid:long}/bo_getqueue")]
+RecipeClient.cs-        public async Task<IActionResult> BoGetQueue(ulong pid)
+--
+RecipeClient.cs-        [HttpGet]
+RecipeClient.cs:        [Route("make_recipe_items")]
+RecipeClient.cs-        public async Task<IActionResult> MakeRecipeItems()
+--
+RecipeClient.cs-        [HttpGet]
+RecipeClient.cs:        [Route("schematics")]
+RecipeClient.cs-        public async Task<IActionResult> Schematics()
+--
+RepairUnitClient.cs-    [ApiController]
+RepairUnitClient.cs:    [Route("[controller]")]
+RepairUnitClient.cs-    public class RepairUnitController : ControllerBase
+--
+RepairUnitClient.cs-        [HttpGet]
+RepairUnitClient.cs:        [Route("{id:long}/diff/by/{pid:long}")]
+RepairUnitClient.cs-        public async Task<IActionResult> Diff(ulong id, ulong pid, [FromBody]RepairUnitOperation ruo)
+--
+RepairUnitClient.cs-        [HttpGet]
+RepairUnitClient.cs:        [Route("{eid:long}/scan/by/{pid:long}")]
+RepairUnitClient.cs-        public async Task<IActionResult> Scan(ulong id, ulong pid)
+--
+RepairUnitClient.cs-        [HttpPost]
+RepairUnitClient.cs:        [Route("{id:long}/cancel/{force}/by/{pid:long}")]
+RepairUnitClient.cs-        public async Task<IActionResult> Cancel(ulong id, bool force, ulong pid)
+--
+RepairUnitClient.cs-        [HttpPost]
+RepairUnitClient.cs:        [Route("{id:long}/start/by/{pid:long}")]
+RepairUnitClient.cs-        public async Task<IActionResult> Start(ulong id, ulong pid, [FromBody]RepairUnitOperation ruo)
+--
+RepairUnitClient.cs-        [HttpPost]
+RepairUnitClient.cs:        [Route("{id:long}/finalize/{force}/by/{pid:long}")]
+RepairUnitClient.cs-        public async Task<IActionResult> Finalize(ulong id, bool force, ulong pid)
+--
+RepairUnitClient.cs-        [HttpPost]
+RepairUnitClient.cs:        [Route("{id:long}/setoutput/{cid:long}")]
+RepairUnitClient.cs-        public async Task<IActionResult> SetOutput(ulong id, ulong cid)
+--
+RepairUnitClient.cs-        [HttpPost]
+RepairUnitClient.cs:        [Route("{id:long}/addinput/{cid:long}")]
+RepairUnitClient.cs-        public async Task<IActionResult> AddInput(ulong id, ulong cid)
+--
+RepairUnitClient.cs-        [HttpPost]
+RepairUnitClient.cs:        [Route("{id:long}/removeinput/{cid:long}")]
+RepairUnitClient.cs-        public async Task<IActionResult> RemoveInput(ulong id, ulong cid)
+--
+RepairUnitClient.cs-        [HttpGet]
+RepairUnitClient.cs:        [Route("{id:long}/snapshotsinfo/{cid:long}/by/{pid:long}")]
+RepairUnitClient.cs-        public async Task<IActionResult> SnapshotsInfo(ulong id, ulong cid, ulong pid)
+--
+RepairUnitClient.cs-        [HttpPost]
+RepairUnitClient.cs:        [Route("{id:long}/debugfinish")]
+RepairUnitClient.cs-        public async Task<IActionResult> DebugFinish(long id)
+--
+Router.generated.cs-    [ApiController]
+Router.generated.cs:    [Route("[controller]")]
+Router.generated.cs-    public class RouterController: ControllerBase
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("435377/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> AnticheatMessageSent(ulong playerId, [FromBody] AnticheatMessage v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("16970/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetWallet(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("41441/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerGetToolbar(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("905773/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerSetToolbar(ulong playerId, [FromBody] ToolbarInfo v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("266975/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerPropertyUpdateRequest(ulong playerId, [FromBody] PlayerPropertyUpdate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("722557/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerTeleportToReferrer(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("702258/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructCanWarp(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("965230/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructWarpStart(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("925879/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructWarpEnd(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("311405/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructConsumeWarpCells(ulong playerId, [FromBody] WarpRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("723847/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ReplaceElement(ulong playerId, [FromBody] ElementInConstruct v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("90563/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerAchievementUnlock(ulong playerId, [FromBody] AchievementUnlock v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("575514/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerInfoGet(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("141910/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerInfoGetByName(ulong playerId, [FromBody] PlayerName v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("934822/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerInfoSet(ulong playerId, [FromBody] PlayerInfo v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("962381/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerHardRespawn(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("867278/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementSalvage(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("911031/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementSalvageFromStorage(ulong playerId, [FromBody] StorageDrop v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("142868/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementAdd(ulong playerId, [FromBody] ElementDeploy v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("104414/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementDelete(ulong playerId, [FromBody] ElementInConstruct v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("30005/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementDestroy(ulong playerId, [FromBody] ElementInConstruct v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("655138/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementMove(ulong playerId, [FromBody] ElementLocation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("502187/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementGet(ulong playerId, [FromBody] ElementLODSubscriptionLevel v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("615945/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementSetCollidingElements(ulong playerId, [FromBody] ElementColliding v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("943364/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructSetCollidingElements(ulong playerId, [FromBody] ElementCollidingList v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("142568/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructSubscribe(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("998475/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructUnsubscribe(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("693459/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementPropertyUpdate(ulong playerId, [FromBody] ElementPropertyUpdate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("833296/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementPropertyGet(ulong playerId, [FromBody] ElementPropertyId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("920307/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementDamageRequest(ulong playerId, [FromBody] ElementDamageOperation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("251590/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementUseStart(ulong playerId, [FromBody] ElementUse v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("898910/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementUseStop(ulong playerId, [FromBody] ElementUse v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("279981/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementLinkCreate(ulong playerId, [FromBody] LinkInfo v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("34796/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementLinkDelete(ulong playerId, [FromBody] LinkInfo v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("153089/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementLinkBatchEdit(ulong playerId, [FromBody] LinkBatchEdit v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("86286/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructUpgrade(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("602835/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementUpgrade(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("113007/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ToggleDRMRequest(ulong playerId, [FromBody] ToggleDRM v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("548791/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> VoxelModify(ulong playerId, [FromBody] VoxelEdit v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("383514/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructCreate(ulong playerId, [FromBody] ConstructRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("138329/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructDelete(ulong playerId, [FromBody] ConstructDeletion v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("235439/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructCountGet(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("353014/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructTreeGet(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("634488/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructOwnedPositionGet(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("905346/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructWarpDestinationGet(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("463710/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructRename(ulong playerId, [FromBody] ConstructNameSet v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("587288/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructUnparentConstruct(ulong playerId, [FromBody] UnparentConstructRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("430016/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructUnparentPlayer(ulong playerId, [FromBody] UnparentPlayerRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("652745/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructStartBuildMode(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("235169/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructStopBuildMode(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("254695/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructTakeOver(ulong playerId, [FromBody] ConstructControl v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("935981/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructChangeControl(ulong playerId, [FromBody] ConstructControl v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("540467/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructLeave(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("874622/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructTeleportRequest(ulong playerId, [FromBody] ConstructTeleport v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("808317/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructSetOwner(ulong playerId, [FromBody] ConstructOwnerSet v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("399235/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructCreateKey(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("808348/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructUseKey(ulong playerId, [FromBody] ConstructKeyUse v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("799883/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructRequisitionRequest(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("382289/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ConstructRequisitionCancelRequest(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("426823/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryUpdateBalanceRequest(ulong playerId, [FromBody] TerritoryBalanceUpdate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("683463/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryTokenizeRequest(ulong playerId, [FromBody] TerritoryTileIndex v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("293505/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryConsumeKeyRequest(ulong playerId, [FromBody] TerritoryKeyConsumption v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("239712/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryMyTerritoriesRequest(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("158682/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryReserveRequest(ulong playerId, [FromBody] TerritoryClaim v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("975716/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryClaimRequest(ulong playerId, [FromBody] TerritoryClaim v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("743039/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryReleaseRequest(ulong playerId, [FromBody] TerritoryRelease v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("599969/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryUpdateRequest(ulong playerId, [FromBody] TerritoryUpdate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("396469/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryGet(ulong playerId, [FromBody] TerritoryTileIndex v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("5013/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryMapSubscribe(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("691923/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryMapGet(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("313592/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TerritoryMapUnsubscribe(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("973345/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketGetList(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("89719/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketOpen(ulong playerId, [FromBody] MarketAccessPoint v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("868699/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketClose(ulong playerId, [FromBody] MarketAccessPoint v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("143188/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketSelectItem(ulong playerId, [FromBody] MarketSelectRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("772666/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketGetMyOrders(ulong playerId, [FromBody] MarketSelectRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("869506/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketInstantOrder(ulong playerId, [FromBody] MarketRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("213318/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketPlaceOrder(ulong playerId, [FromBody] MarketRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("714884/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketUpdateOrder(ulong playerId, [FromBody] MarketRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("726375/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketCancelOrder(ulong playerId, [FromBody] MarketOrder v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("708489/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketContainerGetMyContent(ulong playerId, [FromBody] MarketSelectRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("414225/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketStorageMove(ulong playerId, [FromBody] MarketStorageMoveInfo v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("30117/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketPackageCreate(ulong playerId, [FromBody] PackageMarketCreate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("814257/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MarketPackageExpand(ulong playerId, [FromBody] PackageMarketExpand v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("450483/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BookmarkGetList(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("606528/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BookmarkAdd(ulong playerId, [FromBody] Bookmark v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("797157/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BookmarkRemove(ulong playerId, [FromBody] BookmarkId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("589291/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BlueprintCreation(ulong playerId, [FromBody] BlueprintCreate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("672579/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BlueprintCompaction(ulong playerId, [FromBody] BlueprintCreate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("825659/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BlueprintSnapshotCreation(ulong playerId, [FromBody] SnapshotCreate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("224002/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BlueprintInfo(ulong playerId, [FromBody] BlueprintId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("961571/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BlueprintUse(ulong playerId, [FromBody] BlueprintDeploy v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("997291/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BlueprintSplitRequest(ulong playerId, [FromBody] BlueprintSplit v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("521672/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ResurrectionNodeListGet(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("563861/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ResurrectionNodeAdd(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("461114/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ResurrectionNodeRemove(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("922750/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RecipeGetQueue(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("757489/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RecipeEnqueue(ulong playerId, [FromBody] RecipeRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("347018/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RecipeResume(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("921873/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RecipeAbort(ulong playerId, [FromBody] RecipeStatusId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("859231/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RecipeCollect(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("271664/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RecipeMove(ulong playerId, [FromBody] RecipeMoveAfter v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("476106/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BarterRequest(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("747111/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BarterCancel(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("232900/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BarterUpdate(ulong playerId, [FromBody] BarterSessionState v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("475429/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerPositionSubscribe(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("46984/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerPositionUnsubscribe(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("763943/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerPlanetPosition(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("169951/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetEntityName(ulong playerId, [FromBody] EntityId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("819735/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FriendListSubscribe(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("595328/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FriendMakeRequest(ulong playerId, [FromBody] FriendRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("344050/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FriendAnswerRequest(ulong playerId, [FromBody] FriendRequestResponse v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("774151/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FriendRemove(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("23076/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PurchaseTalent(ulong playerId, [FromBody] TalentAndLevel v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("692234/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetTalentState(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("155828/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ChangeTalentQueue(ulong playerId, [FromBody] TalentQueue v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("772028/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TalentsRespecialize(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("721748/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetAllNotifications(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("51345/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetAllUnsentNotifications(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("157103/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> NotificationMarkRead(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("341211/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> AddNewNotification(ulong playerId, [FromBody] NotificationMessage v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("419963/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> DeleteNotification(ulong playerId, [FromBody] NotificationId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("219967/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> DeleteExpiredNotifications(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("858695/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> DeleteAllNotifications(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("826124/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> AcknowledgeNotification(ulong playerId, [FromBody] NotificationId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("330864/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RadarScanStart2(ulong playerId, [FromBody] RadarScan v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("75336/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RadarScanStop2(ulong playerId, [FromBody] RadarScan v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("780327/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RadarIdentifyStart2(ulong playerId, [FromBody] RadarIdentifyTarget v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("754495/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RadarIdentifyStop2(ulong playerId, [FromBody] RadarIdentifyTarget v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("38809/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TransponderSetTag(ulong playerId, [FromBody] RadarTransponderTagList v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("633503/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> TransponderSwitchActive(ulong playerId, [FromBody] RadarTransponderActiveState v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("883389/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetTargetingAlertInfos(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("8657/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> WeaponAttackStart(ulong playerId, [FromBody] AttackOrderTarget v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("352169/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> WeaponAttackStop(ulong playerId, [FromBody] AttackOrderTarget v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("163318/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> WeaponFireOnce(ulong playerId, [FromBody] WeaponFire v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("48642/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> WeaponReload(ulong playerId, [FromBody] WeaponLoad v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("873010/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PvpShieldToggle(ulong playerId, [FromBody] PvpShieldToggleRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("437504/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PvpShieldSetResistances(ulong playerId, [FromBody] PvpShieldResistance v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("15673/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PvpShieldStartVenting(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("768529/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PvpShieldStopVenting(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("145953/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PvpBaseShieldSetLockdownExitTime(ulong playerId, [FromBody] LockdownExitTime v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("653232/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> IndustrySetRecipeFC(ulong playerId, [FromBody] IndustrySetRecipe v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("419495/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> IndustryStatus(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("673114/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> IndustryStartRequest(ulong playerId, [FromBody] IndustryStart v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("935973/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> IndustryStopSoft(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("938248/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> InudstryStopHard(ulong playerId, [FromBody] IndustryStopRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("305481/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> InudstrySetClaimProducts(ulong playerId, [FromBody] IndustryClaimProducts v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("995625/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> InudstrySetNotifications(ulong playerId, [FromBody] IndustrySetNotificationsState v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("864481/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SetSchematicContainer(ulong playerId, [FromBody] ElementInConstruct v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("360664/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ResearchStateRequest(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("169084/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ResearchSetSlot(ulong playerId, [FromBody] ResearchSlot v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("394902/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ResearchCollectSlot(ulong playerId, [FromBody] ResearchSlot v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("720598/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ResearchCancelSlot(ulong playerId, [FromBody] ResearchSlot v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("808943/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> InventoryGet(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("259076/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> InventoryReady(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("930220/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> StorageOpMove(ulong playerId, [FromBody] StorageMove v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("44336/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> StorageOpSwap(ulong playerId, [FromBody] StorageSwap v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("964138/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> StorageOpDrop(ulong playerId, [FromBody] StorageDrop v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("493847/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> StorageOpDropProperties(ulong playerId, [FromBody] StorageDropProperties v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("175675/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> StorageOpClaim(ulong playerId, [FromBody] StorageClaim v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("689609/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> StorageSetPrimaryContainer(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("38812/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> LinkedContainerGetState(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("528058/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SetPrimaryContainerDefaultState(ulong playerId, [FromBody] LinkedContainerDefaultState v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("598219/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> StorageOpStack(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("500544/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> StorageOpSetAutoClaim(ulong playerId, [FromBody] ContainerAutoClaim v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("30527/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> DataItemCreation(ulong playerId, [FromBody] DataItemCreate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("680534/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> StoragePackageCreate(ulong playerId, [FromBody] PackageCreate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("464674/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> StoragePackageExpand(ulong playerId, [FromBody] PackageExpand v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("65604/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ContainerGet(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("522358/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ContainerOpen(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("207322/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ContainerClose(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("439264/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetStorageParent(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("595186/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSRegistrySubscribe(ulong playerId, [FromBody] EntityId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("927637/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSRegistryUnsubscribe(ulong playerId, [FromBody] EntityId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("583556/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSActorCreate(ulong playerId, [FromBody] RDMS.ActorData v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("338371/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSActorDelete(ulong playerId, [FromBody] RDMS.ActorSelector v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("743955/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSActorUpdate(ulong playerId, [FromBody] RDMS.ActorData v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("820391/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSTagCreate(ulong playerId, [FromBody] RDMS.TagData v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("658504/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSTagCreateOrGet(ulong playerId, [FromBody] RDMS.TagData v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("980790/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSTagUpdate(ulong playerId, [FromBody] RDMS.TagData v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("575206/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSTagDelete(ulong playerId, [FromBody] RDMS.TagSelector v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("798233/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSAssetSubscribe(ulong playerId, [FromBody] RDMS.AssetId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("910844/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSAssetUnsubscribe(ulong playerId, [FromBody] RDMS.AssetId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("314522/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSAssetUpdate(ulong playerId, [FromBody] RDMS.AssetUpdateTags v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("417615/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSAssetGetTagList(ulong playerId, [FromBody] RDMS.AssetId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("102371/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSAssetGetListFromTag(ulong playerId, [FromBody] RDMS.TagSelector v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("371131/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSPolicyCreate(ulong playerId, [FromBody] RDMS.PolicyData v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("125946/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSPolicyDelete(ulong playerId, [FromBody] RDMS.PolicySelector v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("531530/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSPolicyUpdate(ulong playerId, [FromBody] RDMS.PolicyData v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("980808/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RDMSGetRights(ulong playerId, [FromBody] RDMS.AssetId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("863033/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerDirectorySearch(ulong playerId, [FromBody] PlayerName v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("193792/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> LocalizationQuery(ulong playerId, [FromBody] LocationRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("528793/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> LocalizationQueryAll(ulong playerId, [FromBody] LocationRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("706135/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationDescribe(ulong playerId, [FromBody] OrganizationStateRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("923302/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationSetDescription(ulong playerId, [FromBody] OrganizationDescription v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("160627/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationSetLogo(ulong playerId, [FromBody] OrganizationDescription v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("838745/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationUpdate(ulong playerId, [FromBody] OrganizationCreationData v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("18991/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationJoinRequest(ulong playerId, [FromBody] JoinRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("382837/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationJoinRequestCancel(ulong playerId, [FromBody] JoinRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("809666/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationGetJoinRequests(ulong playerId, [FromBody] OrganizationId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("563029/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationJoinResponse(ulong playerId, [FromBody] JoinResponse v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("317820/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationRemoveMember(ulong playerId, [FromBody] OrganizationKickMember v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("30824/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationCreateVote(ulong playerId, [FromBody] VoteDefinition v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("244535/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationGetLiveVotes(ulong playerId, [FromBody] PastVotes v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("931519/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationGetPastVotes(ulong playerId, [FromBody] PastVotes v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("676682/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationJoinOrganizationResponse(ulong playerId, [FromBody] JoinResponse v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("205132/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationMemberSearchReq(ulong playerId, [FromBody] OrganizationMemberSearch v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("678346/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationCreate(ulong playerId, [FromBody] OrganizationCreationData v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("116319/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationCastVote(ulong playerId, [FromBody] VoteCast v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("766077/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationRecruitRequest(ulong playerId, [FromBody] RecruitingOffer v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("464067/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationRecruitRequestCancel(ulong playerId, [FromBody] RecruitingOffer v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("433161/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationDelete(ulong playerId, [FromBody] OrganizationId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("985568/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationRecruitReply(ulong playerId, [FromBody] JoinResponse v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("49250/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationRecruitOfferList(ulong playerId, [FromBody] OrganizationId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("485621/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationSearchRequest(ulong playerId, [FromBody] OrganizationSearch v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("531428/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationMyOrganizations(ulong playerId, [FromBody] EntityId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("524749/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationMyOrganizationRequests(ulong playerId, [FromBody] EntityId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("349341/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationEnrolments(ulong playerId, [FromBody] OrganizationId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("39708/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationNewsGetRequest(ulong playerId, [FromBody] OrganizationNewsSearch v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("516547/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationNewsMarkReadRequest(ulong playerId, [FromBody] OrganizationNewsRead v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("480546/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationNewsPostRequest(ulong playerId, [FromBody] OrganizationNewsPost v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("151523/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationNewsPinRequest(ulong playerId, [FromBody] OrganizationNewsPin v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("795343/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationNewsDeleteRequest(ulong playerId, [FromBody] OrganizationNewsDelete v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("679915/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationAlliancesRequest(ulong playerId, [FromBody] OrganizationId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("237162/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationKickHistory(ulong playerId, [FromBody] OrganizationKickHistoryRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("283606/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationInCommon(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("582623/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationsWithWalletRights(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("16518/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrganizationConstructLimitInfo(ulong playerId, [FromBody] OrganizationId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("297698/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerAllocateOrgConstructSlot(ulong playerId, [FromBody] ConstructSlotAllocation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("178150/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerGetAllocatedOrgConstructSlot(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("383944/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerGetAllocatedOrgConstructSlotLog(ulong playerId, [FromBody] OrganizationId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("591428/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrgGetLastAbandonment(ulong playerId, [FromBody] OrganizationId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("668304/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> DispenserConfigure(ulong playerId, [FromBody] DispenserParameters v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("199172/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> DispenserUseRequest(ulong playerId, [FromBody] DispenserUse v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("961010/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> DispenserStatus(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("339447/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SandboxEnterRequest(ulong playerId, [FromBody] SandboxEnter v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("115814/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SandboxLeaveRequest(ulong playerId, [FromBody] SandboxLeave v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("470182/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PermaboxEnterRequest(ulong playerId, [FromBody] RelativeLocation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("246549/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PermaboxLeaveRequest(ulong playerId, [FromBody] RelativeLocation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("157492/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PermaboxInfoRequest(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("954067/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SurrogateSearch(ulong playerId, [FromBody] SPSSearch v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("831931/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SurrogateEnter(ulong playerId, [FromBody] SPSEnter v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("407082/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SurrogateLeave(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("24778/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ChatJoinChannel(ulong playerId, [FromBody] MessageChannel v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("263335/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ChatLeaveChannel(ulong playerId, [FromBody] MessageChannel v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("641616/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ChatMessageSend(ulong playerId, [FromBody] MessageContent v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("646175/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PopupSend(ulong playerId, [FromBody] PopupMessage v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("301253/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SandboxInfoRequest(ulong playerId, [FromBody] TutorialName v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("876786/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionStats(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("961847/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionCreate(ulong playerId, [FromBody] MissionCreation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("768965/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionMyActive(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("907902/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionHistoryRequest(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("333710/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionsListActive(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("682119/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionsListRespondents(ulong playerId, [FromBody] MissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("638997/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionChatHistory(ulong playerId, [FromBody] MissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("174537/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionPostChat(ulong playerId, [FromBody] MissionPostMessage v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("223721/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionApply(ulong playerId, [FromBody] MissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("2223/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionUpdateRequest(ulong playerId, [FromBody] MissionUpdate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("429361/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionAssignRequest(ulong playerId, [FromBody] MissionAccepted v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("635141/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionChatSubscribe(ulong playerId, [FromBody] MissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("69352/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MissionChatUnsubscribe(ulong playerId, [FromBody] MissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("476309/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SandboxListRequest(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("208344/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionCreate(ulong playerId, [FromBody] FormalMissionCreation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("558794/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionApply(ulong playerId, [FromBody] FormalMissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("221628/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionActiveList(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("853650/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionHistoryList(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("103508/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionLive(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("664816/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionPickup(ulong playerId, [FromBody] FormalMissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("212623/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionDeliver(ulong playerId, [FromBody] FormalMissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("578273/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionPendingRatings(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("841360/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionRate(ulong playerId, [FromBody] FormalMissionRating v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("150908/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionAbort(ulong playerId, [FromBody] FormalMissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("493850/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionContainers(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("211859/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionStats(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("628688/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FormalMissionUpdateRequest(ulong playerId, [FromBody] FormalMissionUpdate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("162678/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> AsteroidDSATStart(ulong playerId, [FromBody] DSATRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("161517/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> AsteroidDSATScan(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("651911/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> AsteroidDSATNext(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("838196/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> AsteroidGATList(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("692219/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> AsteroidDiscover(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("240601/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> WreckList(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("292118/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerGetSkins(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("281774/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ElementRepair(ulong playerId, [FromBody] ScrapRepair v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("350258/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RepairUnitScanRequest(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("223782/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RepairUnitDiffRequest(ulong playerId, [FromBody] RepairUnitOperation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("646843/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RepairUnitStartRequest(ulong playerId, [FromBody] RepairUnitOperation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("233139/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RepairUnitCancelRequest(ulong playerId, [FromBody] RepairUnitOperation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("967391/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RepairUnitFinalizeRequest(ulong playerId, [FromBody] RepairUnitOperation v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("828768/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> RepairUnitSnapshotInfo(ulong playerId, [FromBody] SnapshotsInfoRequest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("919313/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MiningUnitStart(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("845737/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MiningUnitStop(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("238037/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MiningUnitSetOre(ulong playerId, [FromBody] MiningUnitOre v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("243166/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MiningUnitPoolAvailable(ulong playerId, [FromBody] MiningUnitOreList v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("27901/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MiningUnitGetPool(ulong playerId, [FromBody] TerritoryTileIndex v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("18634/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MiningUnitCalibrate(ulong playerId, [FromBody] ElementId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("555358/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> MiningUnitSetCalibrationBonus(ulong playerId, [FromBody] MiningUnitCalibrationBonus v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("268632/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> WalletTransferRequest(ulong playerId, [FromBody] WalletTransfer v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("4539/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> WalletConsultRequest(ulong playerId, [FromBody] WalletOperationsQuery v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("209558/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ReportAbuseRequest(ulong playerId, [FromBody] AbuseDescription v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("145231/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> AlienCoreList(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("483251/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FtueGetChoices(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("306147/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FtueStart(ulong playerId, [FromBody] StartupData v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("507860/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> FtueLand(ulong playerId, [FromBody] LanderTouchdown v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("614252/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerGetTitleList(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("972024/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerSetActiveTitle(ulong playerId, [FromBody] ActiveTitle v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("893343/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> PlayerSetActivePet(ulong playerId, [FromBody] Pet v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("518899/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> BotGiveItems(ulong playerId, [FromBody] ItemAndQuantityList v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("17973/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelAcceptMission(ulong playerId, [FromBody] SentinelMissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("452866/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelRejectMission(ulong playerId, [FromBody] SentinelMissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("268271/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelAcquireMission(ulong playerId, [FromBody] SentinelMissionParameters v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("548067/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelEnterMission(ulong playerId, [FromBody] SentinelMissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("312235/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelMissionDetails(ulong playerId, [FromBody] SentinelMissionId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("324434/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelLeaveMission(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("656158/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelLeavePeerMission(ulong playerId, [FromBody] PlayerId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("922448/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelListActiveMissions(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("256934/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelListHistoryMissions(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("287733/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelCheckShip(ulong playerId, [FromBody] SentinelMissionScan v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("21798/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelMarkVisited(ulong playerId, [FromBody] PointOfInterest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("838450/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelMarkVisitedPeer(ulong playerId, [FromBody] SentinelPointOfInterest v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("657901/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelHistoryStatsRequest(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("956656/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelGetGlobalScore(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("373331/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SentinelGetTierList(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("218252/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> NpcShotReply(ulong playerId, [FromBody] NpcShotResult v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("36008/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> ModActionRequest(ulong playerId, [FromBody] ModAction v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("819575/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> NotifyPlayerConnection(ulong playerId, [FromBody] PlayerConnectionInfo v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("946679/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> NotifyPlayerDisconnection(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("827830/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SavePlayerLocation(ulong playerId, [FromBody] PlayerPositionUpdate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("926286/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> SaveConstructLocation(ulong playerId, [FromBody] ConstructUpdate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("991624/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetPlayerLoginState(ulong playerId, [FromBody] AuthUserInfo v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("64159/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetLoginResponseOrCreation(ulong playerId, [FromBody] AuthUserInfo v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("572577/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> CreatePlayerAvatar(ulong playerId, [FromBody] PlayerCreationInfo v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("975658/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> AskDisconnect(ulong playerId, [FromBody] DisconnectionNotification v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("466290/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetConstructInfo(ulong playerId, [FromBody] ConstructId v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("281653/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> UpdateConstructInfo(ulong playerId, [FromBody] ConstructInfoUpdate v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("445719/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> NotifyPlayerParentChange(ulong playerId, [FromBody] ParentingChange v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("727983/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> NotifyConstructParentChange(ulong playerId, [FromBody] ConstructParentingChange v)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("29471/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> GetPlanetarySafeZones(ulong playerId)
+--
+Router.generated.cs-        [HttpPost]
+Router.generated.cs:        [Route("257315/by/{playerId}")]
+Router.generated.cs-        public async Task<IActionResult> OrleansPing(ulong playerId, [FromBody] DebugPing v)
+--
+SPSClient.cs-    [ApiController]
+SPSClient.cs:    [Route("[controller]")]
+SPSClient.cs-    public class SPSController : ControllerBase
+--
+SPSClient.cs-        [HttpGet]
+SPSClient.cs:        [Route("{id:long}/search")]
+SPSClient.cs-        public async Task<IActionResult> Search(long id, [FromBody] SPSSearch query)
+--
+SPSClient.cs-        [HttpPost]
+SPSClient.cs:        [Route("clearcaches/{id:long}")]
+SPSClient.cs-        public async Task<IActionResult> ClearCaches(long id)
+--
+SPSClient.cs-        [HttpPost]
+SPSClient.cs:        [Route("{id:long}/enter")]
+SPSClient.cs-        public async Task<IActionResult> Enter(long id, [FromBody] SPSEnter query)
+--
+SPSClient.cs-        [HttpPost]
+SPSClient.cs:        [Route("{id:long}/leave")]
+SPSClient.cs-        public async Task<IActionResult> Leave(long id)
+--
+SPSClient.cs-        [HttpPost]
+SPSClient.cs:        [Route("pod/{id:long}/killsessions")]
+SPSClient.cs-        public async Task<IActionResult> KillSessions(ulong id)
+--
+SPSClient.cs-        [HttpPost]
+SPSClient.cs:        [Route("recompute_rdms")]
+SPSClient.cs-        public async Task<IActionResult> RecomputeRDMS()
+--
+SandboxClient.cs-    [ApiController]
+SandboxClient.cs:    [Route("[controller]")]
+SandboxClient.cs-    public class SandboxController : ControllerBase
+--
+SandboxClient.cs-        [HttpPost]
+SandboxClient.cs:        [Route("{pid:long}/create/{env}")]
+SandboxClient.cs-        public async Task<IActionResult> Create(ulong pid, string env)
+--
+SandboxClient.cs-        [HttpPost]
+SandboxClient.cs:        [Route("delete/{cid:long}")]
+SandboxClient.cs-        public async Task<IActionResult> Delete(ulong cid)
+--
+SandboxClient.cs-        [HttpPost]
+SandboxClient.cs:        [Route("{pid}/stashinventory")]
+SandboxClient.cs-        public async Task<IActionResult> StashInventory(ulong pid)
+--
+SandboxClient.cs-        [HttpPost]
+SandboxClient.cs:        [Route("{pid}/unstashinventory")]
+SandboxClient.cs-        public async Task<IActionResult> UnstashInventory(ulong pid)
+--
+SandboxClient.cs-        [HttpPost]
+SandboxClient.cs:        [Route("{pid}/entrypoint/{cid}")]
+SandboxClient.cs-        public async Task<IActionResult> FetchEntrypoint(ulong pid, ulong cid)
+--
+SandboxClient.cs-        [HttpPost]
+SandboxClient.cs:        [Route("{pid}/enter/{sname}")]
+SandboxClient.cs-        public async Task<IActionResult> Enter(ulong pid, string sname, [FromBody] RelativeLocation pos)
+--
+SandboxClient.cs-        [HttpPost]
+SandboxClient.cs:        [Route("{pid}/leave")]
+SandboxClient.cs-        public async Task<IActionResult> Leave(ulong pid)
+--
+SandboxClient.cs-        [HttpPost]
+SandboxClient.cs:        [Route("gc/{lt:long}")]
+SandboxClient.cs-        public async Task<IActionResult> GarbageCollect(ulong lifetimeSeconds)
+--
+SandboxClient.cs-        [HttpPost]
+SandboxClient.cs:        [Route("inject/{cid:long}/{pid:long}")]
+SandboxClient.cs-        public async Task<IActionResult> Inject(ulong cid, ulong pid)
+--
+SandboxClient.cs-        [HttpGet]
+SandboxClient.cs:        [Route("{pid}/info/{sname}")]
+SandboxClient.cs-        public async Task<IActionResult> Info(ulong pid, string sname)
+--
+SandboxClient.cs-        [HttpGet]
+SandboxClient.cs:        [Route("{pid}/list")]
+SandboxClient.cs-        public async Task<IActionResult> List(ulong pid)
+--
+Storage/AbstractStorageClient.cs-        [HttpGet]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/content/from/{pid:long}")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> Content(long id, long pid)
+--
+Storage/AbstractStorageClient.cs-        [HttpGet]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/getroot")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> GetRoot(long id)
+--
+Storage/AbstractStorageClient.cs-        [HttpGet]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/prettycontent")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> PrettyContent(long id)
+--
+Storage/AbstractStorageClient.cs-        [HttpPost]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/apply")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> Apply(long id, [FromBody] List<ItemAndQuantity> transaction)
+--
+Storage/AbstractStorageClient.cs-        [HttpPost]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/replace")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> SetSlot(long id, [FromBody] StorageSlot slot)
+--
+Storage/AbstractStorageClient.cs-        [HttpGet]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/dump")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> Dump(long id)
+--
+Storage/AbstractStorageClient.cs-        [HttpPost]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/deactivate")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> Deactivate(long id)
+--
+Storage/AbstractStorageClient.cs-        [HttpPost]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/stack")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> Stack(long id)
+--
+Storage/AbstractStorageClient.cs-        [HttpPost]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/clear")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> Clear(long id)
+--
+Storage/AbstractStorageClient.cs-        [HttpPost]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/giveitems")]
+Storage/AbstractStorageClient.cs-        public virtual async Task<IActionResult> GiveItems(long id, [FromBody] ItemAndQuantity items)
+--
+Storage/AbstractStorageClient.cs-        [HttpPost]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/dropproperties")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> DropProperties(long id, [FromBody] StorageDropProperties sdp)
+--
+Storage/AbstractStorageClient.cs-        [HttpPost]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/package/create")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> PackageCreate(long id, [FromBody] PackageCreate pc)
+--
+Storage/AbstractStorageClient.cs-        [HttpPost]
+Storage/AbstractStorageClient.cs:        [Route("{id:long}/package/expand/{slot:long}")]
+Storage/AbstractStorageClient.cs-        public async Task<IActionResult> PackageExpand(long id, long slot)
+--
+Storage/ContainerClient.cs-{
+Storage/ContainerClient.cs:    [Route("[controller]")]
+Storage/ContainerClient.cs-    public class ContainerController : AbstractStorageController<IContainerGrain>
+--
+Storage/ContainerClient.cs-        [HttpPost]
+Storage/ContainerClient.cs:        [Route("{containerId:long}/giveitems")]
+Storage/ContainerClient.cs-        public override async Task<IActionResult> GiveItems(long containerId, [FromBody] ItemAndQuantity items)
+--
+Storage/InventoryClient.cs-{
+Storage/InventoryClient.cs:    [Route("[controller]")]
+Storage/InventoryClient.cs-    public class InventoryController : AbstractStorageController<IInventoryGrain>
+--
+Storage/InventoryClient.cs-        [HttpGet]
+Storage/InventoryClient.cs:        [Route("{id:long}/content")]
+Storage/InventoryClient.cs-        public async Task<IActionResult> Content(long id)
+--
+Storage/InventoryClient.cs-        [HttpPost]
+Storage/InventoryClient.cs:        [Route("{playerId:long}/reset")]
+Storage/InventoryClient.cs-        public async Task<IActionResult> ResetToDefault(long playerId)
+--
+Storage/InventoryClient.cs-
+Storage/InventoryClient.cs:        [Route("{playerId:long}/fill/{quantity:long}")]
+Storage/InventoryClient.cs-        public async Task<IActionResult> Fill(long playerId, long quantity)
+--
+Storage/InventoryClient.cs-        }
+Storage/InventoryClient.cs:        [Route("{playerId:long}/restore")]
+Storage/InventoryClient.cs-        public async Task<IActionResult> RestoreTools(long playerId)
+--
+Storage/InventoryClient.cs-        [HttpPost]
+Storage/InventoryClient.cs:        [Route("{playerId:long}/create")]
+Storage/InventoryClient.cs-        public async Task<IActionResult> Create(long playerId, [FromBody] ItemInfo item)
+--
+Storage/InventoryClient.cs-        [HttpPost]
+Storage/InventoryClient.cs:        [Route("{playerId:long}/wipeondeath")]
+Storage/InventoryClient.cs-        public async Task<IActionResult> WipeOnDeath(long playerId)
+--
+Storage/InventoryClient.cs-        [HttpPost]
+Storage/InventoryClient.cs:        [Route("destroykey/{constructId:long}")]
+Storage/InventoryClient.cs-        public async Task<IActionResult> DestroyKey(long constructId)
+--
+Storage/PlayerInventoryClient.cs-    [ApiController]
+Storage/PlayerInventoryClient.cs:    [Route("[controller]")]
+Storage/PlayerInventoryClient.cs-    public class PlayerInventoryController : ControllerBase
+--
+Storage/PlayerInventoryClient.cs-        [HttpPost]
+Storage/PlayerInventoryClient.cs:        [Route("{pid:long}/storagedrop")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> StorageDrop(long pid, [FromBody] StorageDrop op)
+--
+Storage/PlayerInventoryClient.cs-        [HttpPost]
+Storage/PlayerInventoryClient.cs:        [Route("{pid:long}/storageclaim")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> StorageClaim(long pid, [FromBody] StorageClaim op)
+--
+Storage/PlayerInventoryClient.cs-        [HttpGet]
+Storage/PlayerInventoryClient.cs:        [Route("{pid:long}/getprimarycontainer")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> GetPrimaryContainer(long pid)
+--
+Storage/PlayerInventoryClient.cs-        [HttpGet]
+Storage/PlayerInventoryClient.cs:        [Route("{pid:long}/primarycontainerstateget")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> GetPrimaryContainerState(long pid)
+--
+Storage/PlayerInventoryClient.cs-        [HttpPost]
+Storage/PlayerInventoryClient.cs:        [Route("{pid:long}/setprimarycontainer/{cid:long}")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> SetPrimaryContainer(long pid, ulong cid)
+--
+Storage/PlayerInventoryClient.cs-        [HttpPost]
+Storage/PlayerInventoryClient.cs:        [Route("{pid:long}/setprimarycontainerdefault/{isDefault:bool}")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> SetPrimaryContainer(long pid, bool isDefault)
+--
+Storage/PlayerInventoryClient.cs-        [HttpPost]
+Storage/PlayerInventoryClient.cs:        [Route("{pid:long}/create")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> Create(long pid, [FromBody] DataItemCreate model)
+--
+Storage/PlayerInventoryClient.cs-        [HttpGet]
+Storage/PlayerInventoryClient.cs:        [Route("getelem/{eid:long}")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> GetElement(long eid)
+--
+Storage/PlayerInventoryClient.cs-        [HttpPost]
+Storage/PlayerInventoryClient.cs:        [Route("{pid:long}/stack/{cid:long}")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> Stack(long pid, ulong cid)
+--
+Storage/PlayerInventoryClient.cs-        [HttpPost]
+Storage/PlayerInventoryClient.cs:        [Route("{pid:long}/package/create")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> PackageCreate(long pid, [FromBody] PackageCreate pc)
+--
+Storage/PlayerInventoryClient.cs-        [HttpPost]
+Storage/PlayerInventoryClient.cs:        [Route("{pid:long}/package/expand")]
+Storage/PlayerInventoryClient.cs-        public async Task<IActionResult> PackageExpand(long pid, [FromBody] PackageExpand pe)
+--
+TalentClient.cs-    [ApiController]
+TalentClient.cs:    [Route("[controller]")]
+TalentClient.cs-    public class TalentController : ControllerBase
+--
+TalentClient.cs-        [HttpGet]
+TalentClient.cs:        [Route("{pid:long}/status")]
+TalentClient.cs-        public async Task<IActionResult> Status(ulong pid)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("{pid:long}/purchase/{talent:long}/{level:int}")]
+TalentClient.cs-        public async Task<IActionResult> Purchase(ulong pid, ulong talent, int level)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("{pid:long}/queue")]
+TalentClient.cs-        public async Task<ActionResult> Queue(ulong pid, [FromBody] TalentQueue requested)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("{pid:long}/reset")]
+TalentClient.cs-        public async Task<IActionResult> Reset(ulong pid)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("{pid:long}/suspend")]
+TalentClient.cs-        public async Task<IActionResult> Suspend(ulong pid)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("{pid:long}/resume")]
+TalentClient.cs-        public async Task<IActionResult> Resume(ulong pid)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("{pid:long}/addtime/{t:long}")]
+TalentClient.cs-        public async Task<IActionResult> AddTime(ulong pid, long t)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("{pid:long}/settime/{t:long}/{force:bool}")]
+TalentClient.cs-        public async Task<IActionResult> SetTime(ulong pid, ulong t, bool force)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("{pid:long}/setavailable/{points:long}")]
+TalentClient.cs-        public async Task<IActionResult> SetAvailable(ulong pid, long points)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("{pid:long}/giveall")]
+TalentClient.cs-        public async Task<IActionResult> GiveAll(ulong pid)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("{pid:long}/removetalent/{t:long}")]
+TalentClient.cs-        public async Task<IActionResult> RemoveTalent(ulong pid, ulong t)
+--
+TalentClient.cs-        [HttpGet]
+TalentClient.cs:        [Route("{pid:long}/use/{item:long}")]
+TalentClient.cs-        public async Task<IActionResult> Use(ulong pid, ulong item)
+--
+TalentClient.cs-        [HttpGet]
+TalentClient.cs:        [Route("{pid:long}/bonuses/{item:long}")]
+TalentClient.cs-        public async Task<IActionResult> Bonuses(ulong pid, ulong item)
+--
+TalentClient.cs-        [HttpGet]
+TalentClient.cs:        [Route("{pid:long}/playerproperty/{prop}")]
+TalentClient.cs-        public async Task<IActionResult> PlayerProperty(ulong pid, string prop)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("all/reset")]
+TalentClient.cs-        public async Task<IActionResult> AllReset()
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("all/removetalent/{t:long}")]
+TalentClient.cs-        public async Task<IActionResult> AllRemoveTalent(ulong t)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("all/give/{t:long}/{l:int}")]
+TalentClient.cs-        public async Task<IActionResult> AllGive(ulong t, int l)
+--
+TalentClient.cs-        [HttpGet]
+TalentClient.cs:        [Route("listgroup/{group}")]
+TalentClient.cs-        public Task<IActionResult> ListGroup(string group)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("all/resetgroup/{group}")]
+TalentClient.cs-        public async Task<IActionResult> AllResetGroup(string group)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("all/addpoints/{p:long}")]
+TalentClient.cs-        public async Task<IActionResult> AllAddPoints(long p)
+--
+TalentClient.cs-        [HttpPost]
+TalentClient.cs:        [Route("all/advance")]
+TalentClient.cs-        public async Task<IActionResult> AllAdvance()
+--
+TalentClient.cs-        [HttpGet]
+TalentClient.cs:        [Route("all/acquired")]
+TalentClient.cs-        public async Task<IActionResult> AllAcquired()
+--
+UserContentClient.cs-    [ApiController]
+UserContentClient.cs:    [Route("[controller]")]
+UserContentClient.cs-    public class UserContentController : ControllerBase
+--
+UserContentClient.cs-        [HttpPost]
+UserContentClient.cs:        [Route("store")]
+UserContentClient.cs-        public async Task<IActionResult> Store()
+--
+UserContentClient.cs-        [HttpGet]
+UserContentClient.cs:        [Route("get/{hash}")]
+UserContentClient.cs-        public async Task<IActionResult> Get(string hash)
+--
+VoteClient.cs-    [ApiController]
+VoteClient.cs:    [Route("[controller]")]
+VoteClient.cs-    public class VoteController : ControllerBase
+--
+VoteClient.cs-        [HttpGet]
+VoteClient.cs:        [Route("{id:long}/status/from/{pid:long}")]
+VoteClient.cs-        public async Task<IActionResult> Status(ulong id, ulong pid, [FromBody] EntityId viewer)
+--
+VoteClient.cs-        [HttpPost]
+VoteClient.cs:        [Route("{id:long}/cast/from/{pid:long}")]
+VoteClient.cs-        public async Task<IActionResult> CastVote(ulong id, ulong pid, [FromBody] VoteCast vote)
+--
+WalletOperationsClient.cs-{
+WalletOperationsClient.cs:    [Route("[controller]")]
+WalletOperationsClient.cs-    public class WalletOperationsController : Controller
+--
+WalletOperationsClient.cs-        [HttpPost]
+WalletOperationsClient.cs:        [Route("log/by/{pid:long}")]
+WalletOperationsClient.cs-        public async Task<IActionResult> WalletLog(ulong pid, [FromBody] WalletOperationsQuery query)
+--
+WalletOperationsClient.cs-        [HttpPost]
+WalletOperationsClient.cs:        [Route("transfer/by/{pid:long}")]
+WalletOperationsClient.cs-        public async Task<IActionResult> Transfer(ulong pid, [FromBody] WalletTransfer transfer)
