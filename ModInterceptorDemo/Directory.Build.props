@@ -1,0 +1,36 @@
+<Project>
+  <PropertyGroup>
+    <RUNTIME_ID Condition="'$(RUNTIME_ID)' == ''">linux-x64</RUNTIME_ID>
+  </PropertyGroup>
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RuntimeIdentifier>$(RUNTIME_ID)</RuntimeIdentifier>
+    <TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+    <GenerateFullPaths>true</GenerateFullPaths>
+    <LangVersion>latest</LangVersion>
+
+    <!-- test might fail weirdly without that https://stackoverflow.com/a/71447488 -->
+    <ProduceReferenceAssemblyInOutDir>true</ProduceReferenceAssemblyInOutDir>
+
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>IDE1006, IDE0037</NoWarn>
+    <!--naming convention, member name can be simplified -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <!-- Shared Package Versions -->
+  <Choose>
+    <When Condition="'$(SkipAnalyser)' != 'true'"> <!-- This allow us to disable the analyser from the command line with `dotnet build /p:SkipAnalyser=true`-->
+        <ItemGroup Condition="'$(MSBuildProjectName)' != 'NQCodeAnalyser'">
+            <!-- Note : this config is only used when doing `dotnet build`, it's not processed by vs code -->
+                <ProjectReference Include="$(MSBuildThisFileDirectory)\NQCodeAnalysis\NQCodeAnalyser\NQCodeAnalyser.csproj"
+                    PrivateAssets="all"
+                    ReferenceOutputAssembly="false"
+                    OutputItemType="Analyzer"
+                />
+        </ItemGroup>
+    </When>
+  </Choose>
+</Project>
