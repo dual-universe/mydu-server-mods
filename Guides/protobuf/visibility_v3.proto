@@ -1,0 +1,144 @@
+syntax = "proto3";
+
+import "common.proto";
+import "visibility.proto";
+import "google/protobuf/empty.proto";
+
+
+
+package NQ.visibility3;
+option go_package = "NQ/proto/visibility3";
+
+service Node {
+  // use by the caf node to send player update to the go visibility node.
+  // rpc UpdatePosition (FrontPlayerUpdate) returns (NQ.visibility.RelativeLocation) {}
+
+  // subscribe at a given location
+  rpc Subscribe(Subscription) returns (google.protobuf.Empty) {}
+
+  rpc Unsubscribe(Unsubscription) returns (SubscriptionState) {}
+
+  rpc PublishEvent(NQ.visibility.EventLocation) returns (google.protobuf.Empty) {}
+
+  rpc PublishConstructDiscovery(ConstructDiscovery) returns (google.protobuf.Empty) {}
+
+}
+
+service Front {
+  rpc PushPublications(FrontPublications)  returns (PushResult) {}
+}
+
+// Subscription represents  a subscription
+// at a given location
+message Subscription{
+  // where that happens, this field is mandatory
+  NQ.visibility.RelativeLocation location = 1;
+
+  Subscriber subscriber = 3;
+
+    // where is the player connected ?
+  NQ.visibility.HostId front = 2;
+
+  // This encode the struct cellsplit.Ranges = 
+  // lodmin(included), lodmax (excluded)
+  // both are encoded on one byte.
+  // They are grouped with
+  //    range = lodmin << 8 | lodmax
+  uint32 ranges = 4;
+
+}
+
+// Unsubscription is sent by the front to a node when the player disconnect, or when he has to
+// migrate to a different nodes
+message Unsubscription {
+  Subscriber subscriber = 1;
+  
+  bool migration = 2;
+}
+
+message SubscriptionState {
+  bytes data = 1;
+}
+
+message FrontPlayerUpdate {
+  // where is the player connected ?
+  NQ.visibility.HostId front = 1;
+
+  // the player update
+  NQ.visibility.Event player_update = 2;
+}
+
+
+message Subscriber {
+  // either a player or periscope, ...
+  uint32 entity_type = 1;  
+
+  uint64 entity_id = 2;
+}
+
+// PushResult is the reply of a publication from the node to the front.
+message PushResult {
+  // list of subscriber that are not there anymore (player disconnected).
+  repeated Subscriber dead_letter = 1;
+}
+
+// Discovery is the equivalent of nqstruct.DiscoveryEvent
+message Discovery {
+  // construct ids appearing
+  repeated uint64 appear = 1;
+
+  // construct ids disappearing (maybe forever)
+  repeated uint64 gone = 2;
+
+  // construct ids deleted
+  repeated uint64 Deleted = 3;
+}
+
+message ConstructDiscovery {
+  message ConstructInCell {
+    uint64 construct_id = 1;
+    int64 time = 2;
+    NQ.visibility.Cell cell = 3;
+  }
+
+  repeated ConstructInCell appear = 1;
+  repeated ConstructInCell disappear = 2;
+}
+
+// FrontPublications contains all the info a node sends to a front so that the fronts can 
+// publish to the players.
+// This message is published every 30 ms.
+// It contains the list of events organized by cells and the list of subscribers with the cells they care of.
+message FrontPublications {
+  // this is a big giant buffer containing all the events, concatenated all together.
+  // This is to minimize allocation
+  // (maybe a bad idea, let's start without that, in fact this is unused)
+  bytes buffer = 1;
+
+  // CellPublication represents publications on a given cell.
+  message CellPublication {
+    NQ.visibility.Cell cell = 1;
+
+    repeated NQ.visibility.Event events = 2;
+
+    ConstructDiscovery discovery = 3;
+  }
+
+  // list of events by cells
+  repeated CellPublication cellsPublication = 2;
+
+  // list of subscribers with the cells they are interested in.
+  message Guy {
+    Subscriber subscriber = 1;
+
+    // index into cellsPublication
+    repeated int32 cells = 3;
+
+    ConstructDiscovery discovery = 4;
+
+    // optional, indicates that the front should reconnect to this node
+    NQ.visibility.HostId suggestedHost = 5;
+  }
+
+  repeated Guy guys = 3;
+}

@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "common.proto";
+
+// TODO: use that instead
+// package NQRPC.Player;
+package NQ.visibility;
+
+option go_package = "NQ/proto";
+//option go_package = "NQ/proto/player";
+
+message PlayerId {
+  uint64 id = 1;
+}
+
+// this message is publish regularly on the bus, for debugging purposes.
+message PlayerInfo {
+    uint64 playerId = 1;
+    RelativeLocation location = 2;
+  
+    // this is used by the loadbalancer
+    Vec3 worldPosition = 3;
+  }
+  
+// message to be sent to a given player.  
+// This is intended for caf when it needs to send a message through grpc instead of raknet.
+message PlayerMessage {
+    uint64 player_id = 1;
+    NQPacketWrapper message = 2;
+}

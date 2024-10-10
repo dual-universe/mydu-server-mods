@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "common.proto";
+
+option csharp_namespace = "NQ.Router.GRPC";
+option go_package = "NQ/proto";
+package NQ.router;
+
+service NQRouter {
+    rpc Send (NQ.visibility.NQPacketWrapper) returns (NQ.visibility.Empty);
+    rpc SendBatch (RouterBatchMessage) returns (NQ.visibility.Empty);
+    rpc Route (NQ.visibility.NQPacketWrapper) returns (NQ.visibility.NQPacketWrapper);
+}
+
+
+message RouterBatchMessage {
+    repeated NQ.visibility.NQPacketWrapper packets = 1;
+}
+

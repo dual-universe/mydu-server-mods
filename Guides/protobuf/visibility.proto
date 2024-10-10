@@ -1,0 +1,363 @@
+
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/any.proto";
+import "common.proto";
+import "player.proto";
+
+package NQ.visibility;
+option go_package = "NQ/proto";
+
+// internal service for caf and bots, and also the gl visualizer tool.
+// we might split the service for clarity.
+service Internal {
+  // The following are for test usage.
+  // Since bots can do their business using only the public server, this is
+  // only used in some integration tests.
+  rpc Connect(ConnectRequest) returns (Token) {}
+
+  // Bind or unbind the player queue to a topic.
+  rpc BindPlayerQueue(Bind) returns (Empty) {}
+
+  // the argument is a ConstructAppear
+  // used by caf (unimplemented) and by bots.
+  rpc CreateConstruct(NQPacketWrapper) returns (Empty) {}
+
+  rpc RemoveConstruct(ConstructId) returns (Empty) {}
+
+  // Event is a representation of a ConstructUpdate.
+  // used by caf and by bots.
+  rpc UpdateConstruct(Event)  returns (Empty) {}
+
+  // use by the caf node to send player update to the go visibility node.
+  rpc UpdatePosition (Event) returns (RelativeLocation) {}
+
+  // RadarStream open an event stream, for the radar or a given construct (periscope)
+  // This is unused at the moment.
+  rpc RadarStream(RadarRequest) returns (stream PublicPublication) {}
+
+  // RadarStartIfNeeded is idempotent.
+  rpc RadarStartIfNeeded (RadarRequest) returns (RadarData);
+
+  rpc RadarStop(RadarRequest) returns (Empty);
+
+  // returns the constructs visible in range.  It does not spawn
+  // a radar.  It only uses the location.
+  // The location must be in world coordinate
+  // RadarRequest must contain a position and a range.
+  // The max range is very short since this is limited 
+  rpc GetVisible(RadarRequest) returns (ConstructPositions);
+
+  // returns what is visible for a given radar id.
+  // only the radar id is needed in RadarRequest.
+  // The radar must have been previously created by RadarStartIfNeeded.
+  rpc GetRadarVisible(RadarRequest) returns (RadarData);
+  
+  // returns the information about players on all nodes.
+  rpc GetPlayerNodes(Empty) returns (AllHostContent) {}
+
+  // Publish an event about a construct.  That might concern events about elements.
+  rpc PublishConstructEvent(ConstructEvent) returns (Empty) {}
+
+  // publish a generic event in space
+  rpc PublishGenericEvent(EventLocation) returns (Empty) {}
+
+  // the argument is a OwnedConstructDataList (construct info list)
+  // used for preload
+  // TODO: need a proper protobuf message
+  rpc CreateConstructList(stream NQPacketWrapper) returns (stream ConstructId) {}
+
+}
+
+// service public (for the external clients)
+// mostly used to have the stream of visibility events.
+service Public {
+  // GetPublication returns the client publication stream
+  rpc GetPublication(Token) returns (stream PublicPublication) {}
+
+
+  // generic request to handle all the current nqmessages.
+  rpc GenericRequest(NQPacketWrapper) returns (NQPacketWrapper) {}
+
+  // given a token, validate it and returns a session cookie.
+  rpc GetSession(Token) returns (Session) {}
+
+}
+
+// RadarRequest are sent by Orleans when a radar turns on.
+message RadarRequest {
+  // the radar_id can be the elementId of the radar element.
+  // This is Orleans' choosing.
+  uint64 radar_id = 1;
+
+  // is it a space or atmo radar ?
+  bool space = 6;
+
+  float range = 7;
+
+  RelativeLocation location = 2;
+
+  enum Mode {
+    // observe in the universe, at the given location, at long distance.
+    RADAR = 0;
+
+    // observe the given parent construct.  The position inside the location
+    // is mostly ignored/should be the center of the construct.
+    // unimplemented at the moment.
+    PERISCOPE = 1;
+  }
+
+  // this is ignored since only radar is done
+  Mode mode = 3;
+
+  // internal to the visibility v3.  It means the request is forwarded from a different "front"
+  // It should not be forwarded again.
+  bool forward = 4;
+}
+
+message RadarData {
+  // this is the rabbit channel associated with this observer.
+  // The visibility will publish there what happens around the radar.
+  PSTopic topic = 1;
+
+  // This is a set of ConstructAppear messages.
+  // Those are the constructs in the radar visibility.
+  // It could be empty (and constructs are announced via publications on the channel)
+  repeated uint64 construct_ids = 3;
+}
+
+message ConstructPositions {
+  message ConstructPosition {
+    uint64 construct_id = 1;
+    Vec3 center = 2;
+    RelativeLocation relative_location  = 3;
+  }
+
+  repeated ConstructPosition list  = 1;
+}
+
+// ConnectRequest is only used in integration test to add a new subscriber.
+message ConnectRequest {
+  // where should be the subscriber
+  RelativeLocation location = 1;
+
+  // untrustable subscriber identity is there.
+  Token token = 2;
+}
+
+// FrontCafConnect is used when the c++ caf connects a player and wants
+// to retrieve the caf publication stream.
+message FrontCafConnect {
+  RelativeLocation location = 1;
+  bool isAdmin = 2;
+  uint64 playerId = 3;
+}
+
+// ConstructEvent is a generic event about a construct.
+// some events concerns events at some specific LOD.  The effect of this
+// is to publish them closer to the center of the construct.
+// Otherwise, the event is published for all the people seeing the construct.
+message ConstructEvent {
+  uint64 construct_id = 1;
+  NQPacketWrapper message = 2;
+
+  // see NQ::ElementLOD
+  // beware that the default value means to publish at element lod == 0.
+  // You should set to the value NQ::ElementLOD::LOD_NONE (255) if this is a non element
+  // event.
+  // It's possible that it is unused.  All construct event are as visible as the construct itself.
+  uint32 element_LOD = 3;
+
+  bool radar_visible = 4;
+}
+
+// payload for publishing a generic event in space.
+// Only specify size or visibility_distance (or lod, if you dare).  Don't specify both.
+message EventLocation {
+  // the event
+  Event event = 1;
+
+  // location in space
+  SimpleLocation location = 2;
+
+  // specify the distance at which the event should be visible.  This determines at which lod to publish the event.
+  float visibility_distance = 5;
+
+  // apparent size of the event, this determines at which lod to publish the event.
+  float size = 3;
+
+  // when set, directly control the lod where to publish the event.
+  // You should not use that too much, because  LOD are internal details of the
+  // publication system.  Prefer to only use the apparent size of the object instead.
+  int32 lod = 4;
+
+  // for "streamed event" (Player and Construct update), this is an increasing sequence
+  // to modulate the publication lod.  This is also called the "phase" on other part of the
+  // visibility.
+  int64 sequence = 6;
+}
+
+// Token represents a form of session that the client must produce
+// And there must be some secret to be sure only one given player can
+// subscribe to a given stream.
+message Token {
+  // this is only used when auth is disabled.
+  // At some point, we will always have a playerId in the jwtoken
+  uint64 untrustable_player_id = 1;
+  google.protobuf.Timestamp timestamp = 2;
+
+  string jwtoken = 4;
+
+  // only set when reconnecting on a publication stream (Public.GetPublication)
+  bool reconnect = 5;
+}
+
+// Session is created by the server and must be given back by the client
+// with every grpc requests
+message Session {
+  // this is the session token.  It is a string.
+  string buffer = 1;
+
+  // this is the player id in the db.
+  // that information is present in the session and in the jwtoken, but it is not easily
+  // accessible.  We provide it there too as a conveniency.
+  uint64 player_id = 2;
+}
+
+// matches the type nqstruct.HostId.  Don't confuse that with types.Host.
+// Todo: we should rename that to NodeDesc, otherwise this is too confusing.
+message HostId {
+    // this is the network byte order representation of an ipv4 address.
+    fixed32 ip = 1;
+    uint32 port = 2;
+}
+
+// Bind is used to bind or unbind a player queue to some business topic.
+message Bind {
+  string exchange = 1;
+  string routing_key = 2;
+  bool unbind = 3;
+  uint64 player_id = 4;
+}
+
+// This is what the server streams to the client.
+// There are events from the visibility and other kind of events from rabbit.
+message PublicPublication {
+  oneof pub {
+    // a vector of NQMessage, packed efficiently.  The visibility produces events in batch.  It is probably more efficient
+    // to pack them in one message, than to send several message on the grpc stream.
+    EventBlob event = 1;
+
+    // This is a generic NQMessage, and ideally we should have only that type here
+    NQPacketWrapper generic_event = 7;
+  }
+
+  // this timestamp is for performance measurement of the publication stream.
+  google.protobuf.Timestamp timestamp = 5;
+}
+
+
+// describe an NQMessage where the payload is located at a specific offset in some foreign buffer.
+// (see EventBlob)
+// It is assumed that the NQMessage is serialized in binary.
+// We could add another field to specify the encoding format if we have to.
+message EventRef  {
+  // NQMessage starts at that offset in the foreign buffer.
+  int32 offset = 1;
+
+  // size of its representation
+  int32 length = 2;
+
+  // This identify the message.
+  EventKind kind = 3;
+}
+
+// EventBlob is a compact representation of an array of NQMessage, using a single allocation for
+// the whole payload.
+message EventBlob {
+  // description of individual events payload.
+  repeated EventRef refs = 1;
+
+  // all the concatenated binary blobs.
+  bytes binary = 2;
+}
+
+/*
+   This is an event sent by a player.
+*/
+message EventFrom {
+  Event event = 1;
+  uint64 playerId = 2;
+}
+
+
+message Cell {
+  int64 x = 1;
+  int64 y = 2;
+  int64 z = 3;
+  int64 h = 4;
+  uint64 construct_id = 5;
+}
+
+// various info about a psa.  For debugging purposes.
+message PSAInfo {
+  uint64 constructId = 1;
+  Cell cell = 2;
+  uint32 numberOfSubscribers = 3;
+
+  uint32 numberOfConstructs = 9;
+
+  // message process by the psa per seconds
+  // [deprecated] this info is crap
+  float messagePerSeconds = 4;
+
+  // incremented every time a message is received by the PSA.
+  int64 messagesProcess = 5;
+
+  // average busyTime
+  float busyTime = 6;
+
+  // how many time was the psa busy during that interval.
+  uint32 numberOfBusy = 7;
+
+  // interval length of the measurement
+  float interval = 8;
+}
+
+
+message ConstructDebugInfo {
+  uint64 constructId = 1;
+  RelativeLocation location = 2;
+
+  // serialized construct state
+  bytes data = 3;
+}
+
+// This is stored in redis for the load balancer.
+message HostContent {
+  // This is the list of players for the given node.
+  // Only the global positions have to be given.
+  repeated PlayerInfo players = 1;
+  HostId host = 2;
+  google.protobuf.Timestamp publishDate = 3;
+}
+
+message AllHostContent {
+  repeated HostContent hosts = 1;
+}
+
+// This is regularly publish of the bus.  For debugging purposes.
+message HostDebugEvent {
+  repeated PlayerInfo players = 1;
+  repeated PSAInfo psas = 2;
+  repeated ConstructDebugInfo constructs = 4;
+  HostId host = 3;
+}
+
+// Nawak is anything.  This is used for the pubsub over redis at the moment (experimental)
+message Nawak {
+  google.protobuf.Any anything = 1;
+  google.protobuf.Timestamp timestamp = 2;
+}
+

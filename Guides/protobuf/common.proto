@@ -1,0 +1,165 @@
+syntax = "proto3";
+
+// import "google/protobuf/timestamp.proto";
+// import "google/protobuf/any.proto";
+
+// TODO, move that so some  other package/namespace
+package NQ.visibility;
+option go_package = "NQ/proto";
+
+message Empty {}
+
+message Vec3 {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+}
+
+message IVec3
+{
+  int64 x = 1;
+  int64 y = 2;
+  int64 z = 3;
+}
+
+message Quat {
+  float x = 1;
+  float y = 2;
+  float z = 3;
+  float w = 4;
+}
+
+message SimpleLocation {
+  uint64 construct_id = 1;
+  Vec3 position = 2;
+}
+
+// RelativeLocation should be renamed as `SolidLocation`, to insist on the presence of a rotation part.
+message RelativeLocation {
+  uint64 construct_id = 1;
+  Vec3 position = 2;
+  Quat rotation = 3;
+}
+
+message ConstructId {
+  uint64 id = 1;
+}
+
+message ConstructSwitch {
+  uint64 construct_id = 1;
+  bool value = 2;
+}
+
+enum EntityKind {
+  EntityKind_UNDEFINED = 0;  // enum token must be globally unique.
+  PLAYER = 1;
+  CONSTRUCT = 2;
+  ELEMENT = 3;
+}
+
+message EntityId {
+  uint64 id = 1;
+  EntityKind kind = 2;
+}
+
+// NQPacketWrapper is a serialization of an nqstruct identified by the [packetType]
+message NQPacketWrapper {
+  // this is NQ::MessageType
+  uint32 packetType = 2;
+
+  // matches NQ::SerializationFormat
+  //   1: JSON
+  //   2: CompactBinary
+  uint32 encodingFormat = 3;
+
+  // serialized version of it.
+  bytes payload = 1;
+
+  // globally unique id that identifies a publication.
+  // It is set when an event is published.  The visibility
+  // cannot guarantee it sends an event just once.  This tracking id
+  // exists to help client to not processing the same publication twice.
+  // its presence is optional
+  uint64 publication_id = 4;
+}
+
+// PSTopic is like nqstruct.PSTopic
+message PSTopic {
+  string exchange    = 1;
+  string routingKey  = 2;
+}
+
+// NQError is the equivalent of NQ::Error
+message NQError {
+  // the code must be an NQ::ErrorCode
+  uint32 error_code = 1;
+
+  string message = 2;
+}
+
+
+// This is the kind of a visible event.  This is what identifies a binary blob.
+// This lives in the same namespace as NQ::MessageType (this is new)
+// There are historical usage that should be killed (before it was a distinct namespace from NQ::MessageType)
+enum EventKind {
+  UNDEFINED = 0;
+}
+
+// It represents one of the publishable event.
+// This is a binary serialization of some nqstruct.
+// This type is more or less equivalent to NQPacketWrapper.
+// It is used internally in the visibility system to represent an event.
+// TODO: we should investigate to get rid of this type and only use NQPacketWrapper.
+message Event {
+  // event having the same kind and id are considered the same and may be subject to coalescing.
+  // This only applies when the id is not zero.
+  uint64 id = 1;
+
+  // identify the type of the payload, this is mostly an NQ::MessageType
+  EventKind kind = 4;
+
+  // globally unique id that identifies a publication.
+  // It is set when an event is published.  The visibility
+  // cannot guarantee it sends an event just once.  This tracking id
+  // exists to help client to not processing the same publication twice.
+  // its presence is optional
+  uint64 publication_id = 2;
+
+
+  // This is the serialized payload of the event.  For an nqstruct, this is binary serialized.
+  // we might add a field to choose the encoding format (json vs binary)
+  bytes data = 5;
+
+  // those are bitflags.
+  enum Flags {
+    Zero = 0;
+
+    // only admin can see that event
+    Admin = 1;
+
+    // event with the same kind and same id can be merged (keep the most recent)
+    // This mostly concerns ConstructUpdate/PlayerUpdate
+    Coalescable = 2;
+
+    // The event should be visible on the radar
+    // This is only used by the visibility v3.
+    // visibility v2 has a business knowledge of the kind of packet that should be radar visible.
+    RadarVisible = 4;
+
+  }
+
+  // Flags contains some metadata about the event.
+  // This is to implement some routing facility without parsing the payload.
+  // Example:  for a playerUpdate, there is the adminFlag.  Non admin players should not receive
+  // PlayerUpdates of admin players.
+  uint64 flags = 6;
+
+  // The timestamp can help during the coalescing to pick the most recent version of a PlayerUpdate, say.
+  uint64 timestamp_ms = 7;
+
+  // identify about whom this event is about
+  EntityId subject = 8;
+
+  // internal use in the visiblity.  It might or might not be there.
+  Vec3 absolute_position = 9;
+}

@@ -1,0 +1,213 @@
+syntax = "proto3";
+
+import "common.proto";
+
+package NQRPC.Voxel;
+
+option go_package = "NQ/proto";
+
+// This is for sending operation to the server
+
+enum OperationType
+{
+    PUT = 0;
+    REMOVE = 1;
+    CHANGE = 2;
+    PUTONPLANET = 4;
+}
+
+enum Isosurface
+{
+    Cube = 0;
+    Triangle = 2;
+    Sphere = 1;
+    Cylinder = 3;
+    Tetrahedron = 4;
+    Cone = 5;
+}
+
+message MaterialId
+{
+    uint64 id = 1;
+    string debugName = 2;
+}
+
+message PutRemoveChange
+{
+    OperationType type = 1;
+    MaterialId id = 2;
+    Isosurface iso = 3;
+}
+
+message BuildLocation
+{
+    int64 x = 1;
+    int64 y = 2;
+    int64 z = 3;
+    uint32 level = 4;
+    bool hexoctree = 5;
+    uint32 face = 6;
+}
+
+message HarvestMapEntry
+{
+    MaterialId id = 1;
+    float value = 2;
+}
+
+message Harvest
+{
+    uint64 decorElementId = 1;
+    BuildLocation location = 2;
+    repeated HarvestMapEntry oreConversion = 3;
+}
+
+message DigFlatten
+{
+    message flattenParam
+    {
+        bool noUnderground = 1;
+        MaterialId id = 2; // Optional, when set replace visible mat by it
+    }
+
+    message digParam
+    {
+        int32 leftoverBiggestSize = 1;
+        int32 leftoverZoneSize = 2;
+        MaterialId id = 3; // Optional, when set we are digging ore
+    }
+
+    message digSmoothParam
+    {
+        reserved 1;
+        float smoothMargin = 2;
+    }
+
+    bool dig = 1;
+    digParam digSettings = 2;
+    digSmoothParam smoothSettings = 3;
+    flattenParam flattenSettings = 4;
+}
+
+message Smooth
+{
+    uint32 SmoothModes = 1; // Should be uint8
+    bool surfacic = 2;
+}
+
+message LineTool
+{
+    repeated NQ.visibility.Vec3 source = 1;
+    repeated NQ.visibility.Vec3 dest = 2;
+    bool put = 3;
+    MaterialId id = 4;
+}
+
+message Paste
+{
+    MaterialId id = 1;
+    bytes elem = 2; // VoxelCellData
+    NQ.visibility.IVec3 gridOrigin = 3;
+    bool keepExisting = 4;
+    bool negativePaste = 5;
+    bool pasteWithAir = 6;
+    bool pasteOpposite = 7;
+}
+
+message MoveVertex
+{
+    NQ.visibility.IVec3 voxelIndex = 1;
+    uint32 newEncodedPosX = 2;
+    uint32 newEncodedPosY = 3;
+    uint32 newEncodedPosZ = 4;
+}
+
+message dmat4
+{
+    // Ordering is line/column
+
+    // column 1
+    double c11 = 1;
+    double c21 = 2;
+    double c31 = 3;
+    double c41 = 4;
+
+    // column 2
+    double c12 = 5;
+    double c22 = 6;
+    double c32 = 7;
+    double c42 = 8;
+
+    // column 3
+    double c13 = 9;
+    double c23 = 10;
+    double c33 = 11;
+    double c43 = 12;
+
+    // column 4
+    double c14 = 13;
+    double c24 = 14;
+    double c34 = 15;
+    double c44 = 16;
+}
+
+message Damage{
+    bytes damageOp = 1; // Serialized damage operation
+}
+
+message FullDamage
+{
+    message ElementInfo
+    {
+        uint64 id = 1;
+        float hitPoints = 2;
+        float maxHitPoint = 3;
+        NQ.visibility.Vec3 bboxPos = 4;
+        NQ.visibility.Quat bboxRot = 5;
+        NQ.visibility.Vec3 bboxSize = 6;
+        repeated float resistances = 7;
+    }
+
+    message PlayerInfo
+    {
+        uint64 id = 1;
+        NQ.visibility.Vec3 position = 2;
+    }
+
+    float damage = 1;
+    int32 damageType = 2;
+    NQ.visibility.Vec3 center = 3;
+    double maxRadius = 4;
+    float hpDistancePower = 5;
+    float airHp = 6;
+    repeated ElementInfo elements = 7;
+    repeated PlayerInfo players = 8;
+    float ampli = 9;
+}
+
+message ReplaceMaterial
+{
+    repeated MaterialId from = 1;
+    repeated MaterialId to = 2;
+}
+
+message OperationParam
+{
+    oneof ops
+    {
+        PutRemoveChange prc = 1;
+        Harvest harvest = 2;
+        DigFlatten digFlatten = 3;
+        Smooth smooth = 4;
+        LineTool line = 5;
+        Paste paste = 6;
+        Damage damage = 8;
+        FullDamage fullDamage = 9;
+        MoveVertex moveVertex = 10;
+        ReplaceMaterial replaceMaterial = 11;
+    }
+
+    // Contains the info needed to create the isosurface
+    // Take a cube of size 1 and transform it to have the correct dimension
+    dmat4 transform = 7;
+}

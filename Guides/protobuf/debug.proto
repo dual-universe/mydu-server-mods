@@ -1,0 +1,67 @@
+syntax = "proto3";
+
+import "visibility.proto";
+import "common.proto";
+import "player.proto";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+
+package NQ.visibility;
+option go_package = "NQ/proto";
+
+service Debug {
+  // The following are for bot usage.  Should be moved to the PublicVisibility service.
+  // still very experimental
+  rpc DumpPSA(Cell) returns (NQPacketWrapper) {}
+  rpc GetPSAInfo(Cell) returns (PSAHostInfo) {}
+  rpc AllPSA(PSAQuery) returns (stream PSAHostInfo) {}
+    // stream everything publish on the redis debug chan.
+  // The gl visualizer tool uses this to introspect the platform.
+  rpc GetAllRedisEvents(google.protobuf.Empty) returns (stream Nawak ) {}
+
+  // returns a constructInfo
+  // used by the gl visualizer.
+  rpc GetConstructInfo(ConstructId) returns (NQPacketWrapper) {}
+
+  rpc SubscribeConstruct(ConstructId) returns (stream NQPacketWrapper) {}
+
+  // subscribe on a topic and receive the stream of all nqmessage post there.
+  rpc SubscribeTopic(PSTopic) returns (stream NQPacketWrapper) {}
+
+  rpc GetConf(google.protobuf.Empty) returns (ConfData) {}
+
+  rpc GetConstructData(ConstructId) returns (ConstructDebugInfo) {}
+
+  // make many pings and return the last one.
+  rpc OrleansPing(PingRequest) returns (google.protobuf.Timestamp) {}
+
+  // returns a serialization of subscriber.SubscriberInfo
+  rpc GetSubscriberData(EntityId) returns (NQPacketWrapper) {}
+
+  rpc PostPlayerMessage(PlayerMessage) returns (google.protobuf.Empty) {}
+}
+
+message PSAHostInfo {
+  HostId host = 1;
+  PSAInfo info = 2;
+}
+
+message PSAQuery {
+  bool with_data = 1;
+}
+
+message ConfData {
+  int32 pubsub_shards = 1;
+};
+
+message PingRequest {
+  // amount of ping to perform on the backend
+  int32 count = 1;
+
+  // amount of time the backend should wait before answering one ping
+  int32 duration_ms = 2;
+
+  // the front should repeat that concurrently that many times.
+  int32 concurrency = 3;
+}

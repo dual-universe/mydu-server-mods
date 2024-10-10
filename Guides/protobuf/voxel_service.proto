@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+// TODO NQRPC.Voxel
+package NQRPC.Voxel;
+option go_package = "NQ/proto";
+
+
+// VoxelCell is a bit like Cell or BuildLocation.
+// We should cleanup that mess when we have some time.
+// It identifies a cell from a construct or a blueprint.
+message VoxelCell
+{
+    int64 x = 1;
+    int64 y = 2;
+    int64 z = 3;
+  int32 h = 4;
+  
+  // kind is a bitfield with many usage.
+  // in the hexOctree schema, it encodes the face.
+  int32  kind = 5;
+
+  // id of either a construct or a blueprint.
+  uint64 id = 6;
+
+  // when true, this is a blueprint.
+  bool blueprint = 7;
+}
+
+
+// This section is about voxel data serialization in redis.  That should also move to a different file.
+
+// CacheCellVersion is used to store a cache in redis.
+message CacheCellVersion {
+    bytes blob = 1;
+    google.protobuf.Timestamp timestamp = 2;
+  }
+  
+  // RedisCellState is the toplevel object store in redis to represent the state of a cell
+  // in the voxel service.  This includes the transaction state, while a cell is being edited (but not commited yet)
+  message RedisCellState
+  {
+    message Field
+    {
+      bytes data = 1;
+      fixed64 hash = 2;
+  
+      // This is a timestamp, but the unit is deliberately ignored and not documented at the moment.
+      // This is used by the mesh service to decide if the triangle soupe is stale or not.
+      // (This is unix nano, probably truncated to millisecond precision, but don't repeat it)
+      int64 version = 3;
+  
+      // This is the field name as defined in the schema.  It matches the field in mongodb.
+      string name = 4;
+    }
+  
+    // SQCellState is the serialization form of db.CellDocStorage
+    // We should probably have just one type and remove db.CellDocStorage.
+    // This is the data as stored in mongo or redis.
+    message SQCellState
+    {
+      // identify the cell we are talking about
+      VoxelCell cell = 7;
+  
+      repeated  Field fields = 1;
+      int64 version = 5;
+  
+      // unix nano
+      int64 lastModified = 2;
+  
+      // unix nano
+      int64 createdAt = 6;
+  
+      // true if the cell was not in the DB in the first place.
+      bool pristine = 4;
+  
+      // next fields are about the MetadataSummary
+      int32 metadataVersion = 8;
+      int32 metadataUpToDatePredicateVersion = 9;
+      bool metadataUpToDate = 10;
+      int32 migrationVersion = 11;
+    }
+  
+    // This is the state of the DB (persistent commited)
+    SQCellState current = 1;
+  
+    // This is the next state, corresponding to a pending transaction, waiting to be commited.
+    SQCellState next = 2;
+  }
+  
+  // RedisCellWriteEntry informs we have an entry to write
+  message RedisCellWriteEntry {
+    // the dirty cell
+    VoxelCell cell = 1;
+  
+    // insertion date
+    google.protobuf.Timestamp timestamp = 2;
+  
+    // typically a bson.ObjectId
+    bytes documentId = 3;
+  }
+  

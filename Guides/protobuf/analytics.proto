@@ -1,0 +1,21 @@
+// this file describe the protocol used by the client to post business metrics to our pipeline.
+syntax = "proto3";
+
+package NQRPC.Analytics;
+
+import "google/protobuf/empty.proto";
+
+
+option go_package = "NQ/proto/analytics";
+
+service Analytics {
+    rpc Upload(Events) returns (google.protobuf.Empty);
+}
+
+message Events {
+    message Event {
+        bytes json = 1;
+        string kind = 2;
+    }
+    repeated Event json_events = 2;
+}
