@@ -1,6 +1,6 @@
 # Forewords
 
-Starting with server 1.5.10, the weapon hit/miss ratio default computation can be overriden with a custom formula.
+Starting with server 1.5.10, the weapon hit/miss ratio default computation can be overridden with a custom formula.
 
 # Enabling
 
@@ -13,9 +13,9 @@ The formula can make use of the following variables:
 - accuracy: Weapon base accuracy times ammo modifier
 - crossSectionFactor: precomputed cross-section factor
 - angleFactor: precomputed angle factor (using optimal/falloff values)
-- distanceFactor: precomputed distance factor (using optimal/falloww values)
+- distanceFactor: precomputed distance factor (using optimal/falloff values)
 - trackingFactor: precomputed tracking (angular velocity) factor
-- optimalICS: optimalCrossSection squared times PI
+- optimalCS: optimal cross-section area, (optimalCrossSectionDiameter / 2) squared times PI
 - crossSection: raw cross section
 - trackingOptimalValue
 - trackingFallOffValue
